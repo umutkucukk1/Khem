@@ -150,9 +150,11 @@ button.btn{font-family:inherit;font-size:14px;font-weight:700;border:none;
   background:var(--kutuIc);color:var(--metin);font-size:19px;font-weight:700;cursor:pointer;
   box-shadow:var(--golge);display:flex;align-items:center;justify-content:center}
 .h-zoom button:active{background:var(--cizgi)}
-.h-msj{position:absolute;top:9px;left:9px;z-index:6;background:var(--vurgu);color:#fff;
+.h-msj{position:absolute;top:9px;left:9px;z-index:7;background:var(--vurgu);color:#fff;
   font-size:12px;font-weight:700;padding:8px 11px;border-radius:9px;max-width:62%;
-  box-shadow:var(--golgeK);display:none}
+  box-shadow:var(--golgeK);display:none;cursor:pointer;
+  animation:nabiz 1.6s ease-in-out infinite}
+@keyframes nabiz{0%,100%{box-shadow:0 0 0 0 rgba(232,93,4,.45)}50%{box-shadow:0 0 0 7px rgba(232,93,4,0)}}
 .h-lgn{position:absolute;bottom:9px;left:9px;z-index:6;background:var(--kutuIc);
   border:1px solid var(--cizgi);border-radius:9px;padding:7px 9px;box-shadow:var(--golge);display:none}
 .h-lgn .sr{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;margin-bottom:3px}
@@ -344,7 +346,7 @@ table.t tr:last-child td{border-bottom:none}
     <button class="btn btn-ik btn-blok btn-kk" onclick="document.getElementById('hYukleKart').style.display='none'">Vazgeç</button>
   </div>
   <div id="haritaKap">
-    <div class="h-msj" id="hMsj"></div>
+    <div class="h-msj" id="hMsj" onclick="moduIptal()"></div>
     <div class="h-zoom">
       <button onclick="zoomAdim(1.5)" title="Yakınlaştır">+</button>
       <button onclick="zoomAdim(1/1.5)" title="Uzaklaştır">−</button>
@@ -833,13 +835,17 @@ hKanvas.addEventListener("mousedown",e=>{
 window.addEventListener("mousemove",e=>{
   if(!drag.on)return;
   const sc=hKanvas.width/hKanvas.getBoundingClientRect().width;
-  if(Math.abs(e.clientX-drag.lx)+Math.abs(e.clientY-drag.ly)>3)drag.moved=true;
+  if(Math.abs(e.clientX-drag.lx)+Math.abs(e.clientY-drag.ly)>6)drag.moved=true;
   zSt.tx+=(e.clientX-drag.lx)*sc;zSt.ty+=(e.clientY-drag.ly)*sc;
   drag.lx=e.clientX;drag.ly=e.clientY;clampZ();hCiz();
 });
 window.addEventListener("mouseup",()=>{drag.on=false;hKanvas.style.cursor="grab";setTimeout(()=>drag.moved=false,60);});
 hKanvas.addEventListener("touchstart",e=>{
-  if(e.touches.length===1){drag={on:true,moved:false,lx:e.touches[0].clientX,ly:e.touches[0].clientY};ptch.on=false;}
+  if(e.touches.length===1){
+    drag={on:true,moved:false,lx:e.touches[0].clientX,ly:e.touches[0].clientY,
+          bx:e.touches[0].clientX,by:e.touches[0].clientY,bt:Date.now()};
+    ptch.on=false;
+  }
   else if(e.touches.length===2){
     drag.on=false;ptch.on=true;
     const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
@@ -864,7 +870,19 @@ hKanvas.addEventListener("touchmove",e=>{
   e.preventDefault();
 },{passive:false});
 hKanvas.addEventListener("touchend",e=>{
-  if(e.touches.length===0){drag.on=false;ptch.on=false;setTimeout(()=>drag.moved=false,80);}
+  if(e.touches.length!==0)return;
+  const d=drag, t=e.changedTouches&&e.changedTouches[0];
+  const kaydirma=d.moved, sikistirma=ptch.on;
+  drag.on=false;ptch.on=false;
+  /* Kısa süreli, yer değiştirmemiş tek dokunuş = tıklama */
+  if(t&&!kaydirma&&!sikistirma&&d.bt&&Date.now()-d.bt<600){
+    const mesafe=Math.hypot(t.clientX-(d.bx??t.clientX),t.clientY-(d.by??t.clientY));
+    if(mesafe<12){
+      sonDokunmaT=Date.now();
+      haritaNoktaSec(t.clientX,t.clientY);
+    }
+  }
+  setTimeout(()=>drag.moved=false,80);
 });
 
 function scrToImg(ex,ey){
@@ -919,44 +937,77 @@ function msjGoster(t){
   if(t){d.textContent=t;d.style.display="block";}else d.style.display="none";
 }
 function kalibrasyonBaslat(){
-  if(!hImg)return;
+  if(!hImg){alert("Harita henüz yüklenmedi.");return;}
+  if(hVeri.olcek&&!confirm("Ölçek zaten kalibre edilmiş (1 px ≈ "+hVeri.olcek.toFixed(2)+" m). Yeniden kalibre edilsin mi?"))return;
   hMod="calib";calibPt=[];
-  msjGoster("📏 Arası bilinen iki noktaya dokunun");
+  msjGoster("📏 Arası bilinen iki noktaya dokunun · iptal için buraya dokunun");
   hCiz();
+}
+function moduIptal(){
+  if(hMod==="yok")return;
+  hMod="yok";calibPt=[];msjGoster(null);hCiz();
 }
 function plumeKaynakSec(){
   if(!sonHesap){alert("Önce dağılım hesabı yapın.");sayfaGec("kimyasal");return;}
   if(!hVeri?.olcek){alert("Önce haritayı kalibre edin (📏 Kalibre Et).");sayfaGec("harita");return;}
   sayfaGec("harita");
   hMod="kaynak";
-  msjGoster("⚠ Salım kaynağının yerine dokunun");
+  msjGoster("⚠ Salım kaynağının yerine dokunun · iptal için buraya dokunun");
 }
 function plumeSil(){plume=null;document.getElementById("hLgn").style.display="none";hCiz();}
 
-hKanvas.addEventListener("click",e=>{
-  if(!hImg||drag.moved)return;
-  const p=scrToImg(e.clientX,e.clientY);
+/* Dokunma ve fare için ortak nokta seçimi.
+   Not: touchstart'ta preventDefault çağrıldığı için mobilde sentetik "click"
+   olayı üretilmez; bu yüzden dokunuş touchend içinde ayrıca yakalanır. */
+let sonDokunmaT=0;
+
+function haritaNoktaSec(ekranX,ekranY){
+  if(!hImg)return;
+  if(hMod!=="calib"&&hMod!=="kaynak")return;
+  const p=scrToImg(ekranX,ekranY);
   if(p.x<0||p.x>1||p.y<0||p.y>1)return;
+
   if(hMod==="calib"){
-    calibPt.push(p);hCiz();
-    if(calibPt.length===2){
-      const m=parseFloat(prompt("Bu iki nokta arası kaç metre?","100"));
+    calibPt.push(p);
+    hCiz();
+    if(calibPt.length===1){
+      msjGoster("📏 Şimdi ikinci noktaya dokunun");
+      return;
+    }
+    const dx=(calibPt[0].x-calibPt[1].x)*hImg.width;
+    const dy=(calibPt[0].y-calibPt[1].y)*hImg.height;
+    const pikselMesafe=Math.hypot(dx,dy);
+    if(pikselMesafe<8){
+      alert("İki nokta birbirine çok yakın. Daha uzak iki nokta seçin.");
+      calibPt=[];hCiz();
+      msjGoster("📏 Arası bilinen iki noktaya dokunun");
+      return;
+    }
+    setTimeout(()=>{
+      const cev=prompt("Bu iki nokta arası kaç metre?","100");
+      const m=parseFloat((cev||"").replace(",","."));
       if(m>0){
-        const dx=(calibPt[0].x-calibPt[1].x)*hImg.width;
-        const dy=(calibPt[0].y-calibPt[1].y)*hImg.height;
-        hVeri.olcek=m/Math.hypot(dx,dy);
+        hVeri.olcek=m/pikselMesafe;
         try{
-          const eski=JSON.parse(localStorage.getItem("khem_harita")||"{}");
-          eski.olcek=hVeri.olcek;
-          localStorage.setItem("khem_harita",JSON.stringify(eski));
-        }catch(e){}
+          const kayit=JSON.parse(localStorage.getItem("khem_harita")||"{}");
+          kayit.olcek=hVeri.olcek;
+          localStorage.setItem("khem_harita",JSON.stringify(kayit));
+        }catch(err){}
         kalibreDur();
+        if(plume)plumeOlustur(plume.x,plume.y);
       }
       hMod="yok";calibPt=[];msjGoster(null);hCiz();
-    }
-  }else if(hMod==="kaynak"){
-    hMod="yok";msjGoster(null);plumeOlustur(p.x,p.y);
+    },60);
+  }else{
+    hMod="yok";msjGoster(null);
+    plumeOlustur(p.x,p.y);
   }
+}
+
+hKanvas.addEventListener("click",e=>{
+  if(Date.now()-sonDokunmaT<600)return;   /* dokunuş zaten işlendi */
+  if(drag.moved)return;
+  haritaNoktaSec(e.clientX,e.clientY);
 });
 
 /* ── yardımcı çizim ── */
