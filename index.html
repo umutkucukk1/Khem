@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>İGSAŞ KHEM v3 — Kimyasal Tehlike ve Etki Modeli</title>
+<title>İGSAŞ KHEM — Kimyasal Tehlike ve Etki Modeli</title>
 <style>
 /* ══ AÇIK TEMA (varsayılan) ══ */
 :root{
@@ -82,6 +82,9 @@ h2.bol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.
   color:var(--soluk);margin:14px 3px 7px}
 .izgara2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .izgara3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.hizali>div{display:flex;flex-direction:column}
+.hizali label.f{min-height:15px;display:flex;align-items:flex-end}
+.hizali .birim{min-height:15px}
 @media(max-width:520px){.izgara3{grid-template-columns:1fr 1fr}}
 
 /* ── KİMYASAL KARTLARI ── */
@@ -185,18 +188,83 @@ table.t tr:last-child td{border-bottom:none}
 
 /* ── YAZDIRMA ── */
 #rapAlan{display:none}
+@page{size:A4;margin:13mm 12mm}
 @media print{
-  body *{visibility:hidden}
-  html,body{overflow:visible;height:auto;background:#fff}
-  #rapAlan,#rapAlan *{visibility:visible}
-  #rapAlan{display:block!important;position:absolute;top:0;left:0;width:100%;
-    padding:18px;font-size:11.5px;color:#000;background:#fff}
-  #rapAlan h1{font-size:16px;margin-bottom:4px}
-  #rapAlan h2{font-size:13px;margin:12px 0 4px;border-bottom:1px solid #333;padding-bottom:2px}
-  #rapAlan table{width:100%;border-collapse:collapse;margin-top:5px}
-  #rapAlan th,#rapAlan td{border:1px solid #999;padding:4px 6px;font-size:11px;text-align:left}
-  #rapAlan .imz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:26px}
-  #rapAlan .imz div{border-top:1px solid #333;padding-top:4px;font-size:10px}
+  html,body{overflow:visible;height:auto;background:#fff;margin:0;padding:0}
+  #uyg{display:none!important}
+  #rapAlan{display:block!important;position:static;width:100%;
+    color:#14202C;font-size:10.5pt;line-height:1.42}
+  #rapAlan *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* başlık bandı */
+  .r-ust{display:flex;align-items:center;gap:10px;border-bottom:3px solid #E85D04;
+    padding-bottom:8px;margin-bottom:12px}
+  .r-logo{width:34px;height:34px;border-radius:8px;background:#E85D04;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}
+  .r-mrk .a{font-size:15pt;font-weight:800;letter-spacing:.5px;line-height:1.1}
+  .r-mrk .b{font-size:8pt;font-weight:700;letter-spacing:1.6px;color:#E85D04}
+  .r-ust .sag{margin-left:auto;text-align:right;font-size:8.5pt;color:#5B6875;line-height:1.5}
+  .r-ust .sag b{color:#14202C;font-size:9.5pt}
+
+  .r-baslik{font-size:14pt;font-weight:800;letter-spacing:.2px;margin:0 0 3px}
+  .r-altbaslik{font-size:9pt;color:#5B6875;margin-bottom:11px}
+
+  .r-uyari{border:1px solid #E0B080;background:#FFF6EC;border-left:4px solid #E85D04;
+    padding:7px 10px;font-size:8.7pt;margin-bottom:13px;border-radius:3px}
+
+  h2.r-bol{font-size:10.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.9px;
+    color:#14202C;margin:15px 0 6px;padding-bottom:3px;border-bottom:1.5px solid #D8DEE6}
+  h2.r-bol span{display:inline-block;background:#14202C;color:#fff;width:16px;height:16px;
+    border-radius:4px;text-align:center;line-height:16px;font-size:8.5pt;margin-right:6px}
+
+  /* kimyasal şeridi */
+  .r-kim{display:flex;align-items:center;gap:10px;border:1px solid #D8DEE6;border-left:5px solid var(--kk);
+    border-radius:5px;padding:9px 12px;margin-bottom:10px;background:#FAFBFC}
+  .r-kim .frm{font-size:17pt;font-weight:800;color:var(--kk);line-height:1}
+  .r-kim .ad{font-size:11pt;font-weight:700}
+  .r-kim .md{font-size:8.5pt;color:#5B6875}
+  .r-kim .rz{margin-left:auto;border:1px solid var(--kk);color:var(--kk);border-radius:4px;
+    padding:3px 9px;font-size:8pt;font-weight:800}
+
+  /* bilgi ızgarası */
+  .r-bilgi{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #D8DEE6;border-radius:5px;overflow:hidden}
+  .r-bilgi div{padding:6px 10px;border-bottom:1px solid #E6EAEF;font-size:9pt}
+  .r-bilgi div:nth-child(2n){border-left:1px solid #E6EAEF}
+  .r-bilgi div:nth-last-child(-n+2){border-bottom:none}
+  .r-bilgi .e{display:block;font-size:7.5pt;color:#6B7684;text-transform:uppercase;letter-spacing:.6px;margin-bottom:1px}
+  .r-bilgi .d{font-weight:700}
+
+  /* tehlike çubukları */
+  .r-zon{margin-bottom:7px}
+  .r-zon .st{display:flex;justify-content:space-between;align-items:baseline;font-size:9pt;margin-bottom:3px}
+  .r-zon .st .ad{font-weight:800;color:var(--zk)}
+  .r-zon .st .ms{font-weight:800;font-size:11pt;color:var(--zk)}
+  .r-zon .cb{height:15px;border-radius:3px;background:#EEF1F5;overflow:hidden;border:1px solid #DEE3EA}
+  .r-zon .cb i{display:block;height:100%;background:var(--zk)}
+  .r-zon .ac{font-size:8pt;color:#5B6875;margin-top:2px}
+
+  table.r-t{width:100%;border-collapse:collapse;margin-top:5px}
+  table.r-t th{background:#14202C;color:#fff;font-size:8pt;text-transform:uppercase;
+    letter-spacing:.6px;padding:5px 7px;text-align:left;font-weight:700}
+  table.r-t td{border:1px solid #D8DEE6;padding:5px 7px;font-size:9pt}
+  table.r-t tr:nth-child(even) td{background:#FAFBFC}
+  table.r-t td.sag{text-align:right;font-variant-numeric:tabular-nums}
+
+  .r-mudahale{border:1px solid #D8DEE6;border-left:4px solid #C1121F;background:#FEF6F6;
+    padding:9px 11px;border-radius:4px;font-size:9pt;margin-top:6px}
+  .r-mudahale b{display:block;margin-bottom:3px}
+
+  .r-harita{width:100%;border:1px solid #D8DEE6;border-radius:5px;margin-top:6px}
+  .r-hnot{font-size:8pt;color:#6B7684;margin-top:3px;text-align:center}
+
+  .r-imz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:26px}
+  .r-imz div{border-top:1px solid #14202C;padding-top:5px;font-size:8.5pt;font-weight:700}
+  .r-imz div span{display:block;font-weight:400;color:#6B7684;font-size:7.5pt;margin-top:14px}
+
+  .r-alt{margin-top:16px;padding-top:7px;border-top:1px solid #D8DEE6;
+    font-size:7.5pt;color:#7B8694;display:flex;justify-content:space-between}
+
+  .kesme{page-break-inside:avoid;break-inside:avoid}
 }
 </style>
 </head>
@@ -205,9 +273,9 @@ table.t tr:last-child td{border-bottom:none}
 <header>
   <div class="logo">⚗️</div>
   <div class="mrk"><div class="ad">İGSAŞ</div><div class="alt">KHEM</div></div>
-  <span class="baslikYazi">Kimyasal Tehlike ve Etki Modeli · v3.0</span>
+  <span class="baslikYazi">Kimyasal Tehlike ve Etki Modeli</span>
   <div class="ust-sag">
-    <span class="bekra">BEKRA<small>Üst Seviye</small></span>
+    <span class="bekra">BEKRA</span>
     <button class="tema-btn" id="temaBtn" onclick="temaDegistir()" title="Gece modu">🌙</button>
   </div>
 </header>
@@ -301,9 +369,11 @@ table.t tr:last-child td{border-bottom:none}
   <div class="adimlar" id="adimGost3"></div>
   <h2 class="bol">Atmosferik koşullar</h2>
   <div class="kart">
-    <div class="izgara3">
+    <div class="izgara2 hizali">
       <div><label class="f">Rüzgâr hızı (m/s)</label><input class="f" type="number" id="aRuz" value="3" step="0.5" min="0.5"><span class="birim">Körfez tipik 2–5</span></div>
-      <div><label class="f">Rüzgâr yönü (°, nereden)</label><input class="f" type="number" id="aYon" value="270" step="5" min="0" max="360"><span class="birim">270° = batıdan</span></div>
+      <div><label class="f">Rüzgâr yönü (°)</label><input class="f" type="number" id="aYon" value="270" step="5" min="0" max="360"><span class="birim">270° = batıdan eser</span></div>
+    </div>
+    <div>
       <div><label class="f">Kararlılık sınıfı</label>
         <select class="f" id="aSinif">
           <option value="A">A — Çok kararsız</option>
@@ -362,7 +432,6 @@ table.t tr:last-child td{border-bottom:none}
     <button class="btn btn-ik btn-kk" onclick="document.getElementById('hYukleKart').style.display='block'">📷 Değiştir</button>
   </div>
   <div class="ipucu" id="kalibreDurum" style="margin-top:7px"></div>
-  <div class="not">Parmakla sürükleyerek kaydırın · çift dokunuşla yakınlaşın · iki parmakla sıkıştırarak ölçekleyin.</div>
 </div>
 
 <!-- ═══ PATLAMA ═══ -->
@@ -749,40 +818,131 @@ function patlamaHesapla(){
 }
 
 /* ══════════ RAPOR ══════════ */
+function raporNo(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,"0");
+  return `KHEM-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+}
+/* Plume çizilmişse haritayı tam görünümde yakala */
+function haritaGoruntusu(){
+  if(!plume||!hImg)return null;
+  try{
+    const yedek={...zSt};
+    zoomSifirla();
+    const veri=hKanvas.toDataURL("image/jpeg",0.86);
+    zSt=yedek;hCiz();
+    return veri;
+  }catch(e){return null;}
+}
 function rapOlustur(){
   if(!sonHesap){alert("Önce bir dağılım hesabı yapın.");sayfaGec("kimyasal");return;}
   const v=KDB[sonHesap.kimyasal];
-  const sat=sonHesap.hesaplar.map(e=>`<tr><td>${e.ad}</td><td>${e.ppm} ppm</td><td>${mYaz(e.mesafe)}</td><td>${e.tanim}</td></tr>`).join("");
-  const lel=sonHesap.lelMesafe!=null?`<tr><td>LEL</td><td>%${v.lfl}</td><td>${mYaz(sonHesap.lelMesafe)}</td><td>Tutuşma riski bölgesi</td></tr>`:"";
-  document.getElementById("rapAlan").innerHTML=`
-  <h1>Kimyasal Yayılım Etki Değerlendirme Raporu</h1>
-  <p>İGSAŞ Körfez · ${new Date().toLocaleString("tr-TR")} · İGSAŞ KHEM v3.0</p>
-  <p><b>Bu rapor tarama amaçlıdır; nihai karar yetkili personele aittir.</b></p>
-  <h2>1. Senaryo Parametreleri</h2>
-  <table>
-    <tr><th>Kimyasal</th><td>${v.duz} — ${v.ad}</td><th>BEKRA sınıfı</th><td>${v.bekra}</td></tr>
-    <tr><th>Salım</th><td>${sonHesap.anlik?sonHesap.Q+" kg (anlık)":sonHesap.Q.toFixed(3)+" kg/s (sürekli)"}</td><th>Kaynak modeli</th><td>${kaynak.mod}</td></tr>
-    <tr><th>Rüzgâr</th><td>${sonHesap.u} m/s · ${sonHesap.yonKaynak}° yönünden</td><th>Kararlılık</th><td>Sınıf ${sonHesap.sinif}</td></tr>
-    <tr><th>Dağılım modeli</th><td colspan="3">${sonHesap.hafif?"Gauss sürekli salım (havadan hafif gaz)":"Britter-McQuaid ağır gaz korelasyonu"}</td></tr>
-  </table>
-  <h2>2. Tehlike Mesafeleri</h2>
-  <table><tr><th>Eşik</th><th>Konsantrasyon</th><th>Mesafe</th><th>Anlam</th></tr>${sat}${lel}</table>
-  <h2>3. Kimyasal Özellikleri</h2>
-  <table>
-    <tr><th>Mol kütlesi</th><td>${v.mol} g/mol</td><th>Gaz yoğunluğu</th><td>${v.yogunlukGaz??"—"} kg/m³</td></tr>
-    <tr><th>Kaynama noktası</th><td>${v.kaynama??"—"} °C</td><th>IDLH</th><td>${v.idlh??"—"} ppm</td></tr>
-  </table>
-  <h2>4. Müdahale Notları</h2>
-  <p>${v.onlem}</p>
-  <p>Derhal tahliye yarıçapı: <b>${mYaz(sonHesap.hesaplar[0]?.mesafe)}</b> · Müdahale sınırı: <b>${mYaz(sonHesap.hesaplar[1]?.mesafe)}</b> · Tahliye koridoru rüzgâra dik yönde planlanır.</p>
-  <div class="imz">
-    <div>Hazırlayan<br>&nbsp;</div>
-    <div>Proses Güvenliği<br>&nbsp;</div>
-    <div>Acil Müdahale / İtfaiye<br>&nbsp;</div>
-  </div>`;
-  window.print();
-}
+  const no=raporNo();
+  const tarih=new Date().toLocaleDateString("tr-TR",{day:"2-digit",month:"long",year:"numeric"});
+  const saat=new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
 
+  const kaynakAd={delik:"Boru / flanş deliği",tank:"Tank kaçağı",havuz:"Havuz buharlaşması",anlik:"Anlık salım"}[kaynak.mod]||kaynak.mod;
+  const sinifAd={A:"A — çok kararsız",B:"B — kararsız",C:"C — az kararsız",
+                 D:"D — nötr",E:"E — az kararlı",F:"F — kararlı"}[sonHesap.sinif];
+
+  /* zonlar + LEL */
+  const zonlar=sonHesap.hesaplar.filter(e=>e.mesafe>0).map(e=>({...e}));
+  if(sonHesap.lelMesafe>0)
+    zonlar.push({ad:"LEL",ppm:v.lfl*10000,renk:"#2D7A46",mesafe:sonHesap.lelMesafe,
+                 tanim:"Alt patlama sınırı — tutuşma riski bölgesi"});
+  const enUzak=Math.max(...zonlar.map(e=>e.mesafe),1);
+
+  const cubuklar=zonlar.map(e=>{
+    const g=Math.max(7,Math.round(e.mesafe/enUzak*100));
+    return `<div class="r-zon kesme" style="--zk:${e.renk}">
+      <div class="st"><span class="ad">${e.ad} · ${e.ppm.toLocaleString("tr-TR")} ppm</span><span class="ms">${mYaz(e.mesafe)}</span></div>
+      <div class="cb"><i style="width:${g}%"></i></div>
+      <div class="ac">${e.tanim}</div>
+    </div>`;
+  }).join("");
+
+  const tabloSat=zonlar.map(e=>
+    `<tr><td><b>${e.ad}</b></td><td class="sag">${e.ppm.toLocaleString("tr-TR")} ppm</td>
+     <td class="sag">${mYaz(e.mesafe)}</td><td>${e.tanim}</td></tr>`).join("");
+
+  const salim=sonHesap.anlik
+    ? sonHesap.Q.toLocaleString("tr-TR")+" kg (anlık)"
+    : sonHesap.Q.toFixed(3)+" kg/s";
+
+  const hGor=haritaGoruntusu();
+  const haritaBolum=hGor?`
+    <h2 class="r-bol"><span>3</span>Tesis Üzerinde Etki Alanı</h2>
+    <img class="r-harita" src="${hGor}">
+    <div class="r-hnot">Salım noktası ve ERPG tehlike bölgeleri · ölçek 1 piksel ≈ ${hVeri.olcek.toFixed(2)} m</div>`:"";
+  const n1=hGor?4:3, n2=hGor?5:4;
+
+  document.getElementById("rapAlan").innerHTML=`
+  <div class="r-ust">
+    <div class="r-logo">⚗</div>
+    <div class="r-mrk"><div class="a">İGSAŞ</div><div class="b">KHEM</div></div>
+    <div class="sag"><b>${no}</b><br>${tarih} · ${saat}<br>Körfez / Kocaeli</div>
+  </div>
+
+  <div class="r-baslik">Kimyasal Yayılım Etki Değerlendirme Raporu</div>
+  <div class="r-altbaslik">Kimyasal Tehlike ve Etki Modeli · Gauss / Britter-McQuaid dağılım analizi</div>
+
+  <div class="r-uyari"><b>Tarama amaçlıdır.</b> Bu rapor ön değerlendirme için üretilmiştir; acil durum kararları yetkili personel tarafından saha koşulları değerlendirilerek verilir. Basınçlı sıvı salımlarında aerosol etkisiyle gerçek mesafeler hesaplanandan uzun olabilir.</div>
+
+  <h2 class="r-bol"><span>1</span>Senaryo Tanımı</h2>
+  <div class="r-kim kesme" style="--kk:${v.renk}">
+    <div class="frm">${v.duz}</div>
+    <div><div class="ad">${v.ad}</div><div class="md">${v.model} dağılım modeli · ${sonHesap.hafif?"havadan hafif":"havadan ağır"}</div></div>
+    ${v.bekra!=="—"?`<div class="rz">BEKRA ${v.bekra}</div>`:""}
+  </div>
+  <div class="r-bilgi kesme">
+    <div><span class="e">Kaynak modeli</span><span class="d">${kaynakAd}</span></div>
+    <div><span class="e">Salım miktarı</span><span class="d">${salim}</span></div>
+    <div><span class="e">Rüzgâr hızı</span><span class="d">${sonHesap.u} m/s</span></div>
+    <div><span class="e">Rüzgâr yönü</span><span class="d">${sonHesap.yonKaynak}° yönünden</span></div>
+    <div><span class="e">Atmosferik kararlılık</span><span class="d">${sinifAd}</span></div>
+    <div><span class="e">Salım tipi</span><span class="d">${sonHesap.anlik?"Anlık (puff)":"Sürekli (plume)"}</span></div>
+  </div>
+
+  <h2 class="r-bol"><span>2</span>Tehlike Mesafeleri</h2>
+  ${cubuklar}
+  <table class="r-t kesme">
+    <tr><th>Eşik</th><th style="text-align:right">Konsantrasyon</th><th style="text-align:right">Rüzgâr altı mesafe</th><th>Anlam</th></tr>
+    ${tabloSat}
+  </table>
+  ${haritaBolum}
+
+  <h2 class="r-bol"><span>${n1}</span>Kimyasal Özellikleri</h2>
+  <div class="r-bilgi kesme">
+    <div><span class="e">Mol kütlesi</span><span class="d">${v.mol} g/mol</span></div>
+    <div><span class="e">Kaynama noktası</span><span class="d">${v.kaynama??"—"} °C</span></div>
+    <div><span class="e">Gaz yoğunluğu</span><span class="d">${v.yogunlukGaz??"—"} kg/m³ (hava 1,225)</span></div>
+    <div><span class="e">IDLH</span><span class="d">${v.idlh?v.idlh+" ppm":"—"}</span></div>
+    <div><span class="e">Patlama sınırları</span><span class="d">${v.lfl?"%"+v.lfl+" – %"+v.ufl:"Yanıcı değil"}</span></div>
+    <div><span class="e">ERPG-1 / 2 / 3</span><span class="d">${v.erpg?v.erpg.e1+" / "+v.erpg.e2+" / "+v.erpg.e3+" ppm":"—"}</span></div>
+  </div>
+  <div style="font-size:9pt;margin-top:6px">${v.aciklama}</div>
+
+  <h2 class="r-bol"><span>${n2}</span>Müdahale ve Tahliye</h2>
+  <table class="r-t kesme">
+    <tr><th>Karar</th><th>Değer</th></tr>
+    <tr><td>Derhal tahliye yarıçapı (ERPG-3)</td><td class="sag"><b style="color:#C1121F">${mYaz(sonHesap.hesaplar[0]?.mesafe)}</b></td></tr>
+    <tr><td>Müdahale ekibi sınırı (ERPG-2)</td><td class="sag"><b style="color:#E85D04">${mYaz(sonHesap.hesaplar[1]?.mesafe)}</b></td></tr>
+    <tr><td>Uyarı bölgesi (ERPG-1)</td><td class="sag"><b style="color:#B37F00">${mYaz(sonHesap.hesaplar[2]?.mesafe)}</b></td></tr>
+    <tr><td>Kaçınılacak bölge</td><td class="sag">${sonHesap.yonKaynak}° yönünün rüzgâr altı</td></tr>
+    <tr><td>Tahliye koridoru</td><td class="sag">Rüzgâr eksenine dik yönde</td></tr>
+  </table>
+  <div class="r-mudahale kesme"><b>Kimyasala özel not</b>${v.onlem}</div>
+
+  <div class="r-imz kesme">
+    <div>Hazırlayan<span>Ad Soyad / İmza / Tarih</span></div>
+    <div>Proses Güvenliği<span>Ad Soyad / İmza / Tarih</span></div>
+    <div>Acil Müdahale<span>Ad Soyad / İmza / Tarih</span></div>
+  </div>
+
+  <div class="r-alt"><span>İGSAŞ Körfez · Kimyasal Tehlike ve Etki Modeli</span><span>${no}</span></div>`;
+
+  setTimeout(()=>window.print(),120);
+}
 </script>
 <script>
 /* ══════════ HARİTA + ZOOM/PAN + PLUME ══════════ */
