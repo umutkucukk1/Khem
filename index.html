@@ -90,6 +90,19 @@ h2.bol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.
 /* ── KİMYASAL KARTLARI ── */
 .km-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 @media(min-width:700px){.km-grid{grid-template-columns:repeat(3,1fr)}}
+.sn-kart{background:var(--panel);border:1px solid var(--cizgi);border-radius:var(--r);
+  padding:11px 13px;margin-bottom:8px;cursor:pointer;box-shadow:var(--golge);
+  transition:border-color .15s,box-shadow .15s;display:flex;align-items:center;gap:10px}
+.sn-kart:active{border-color:var(--vurgu)}
+.sn-kart .sn-ren{width:5px;border-radius:3px;align-self:stretch;flex:none}
+.sn-kart .sn-ic{flex:1;min-width:0}
+.sn-kart .sn-ad{font-weight:700;font-size:13.5px}
+.sn-kart .sn-alt{font-size:11.5px;color:var(--soluk);margin-top:3px}
+.sn-kart .sn-ms{font-size:12px;color:var(--soluk);text-align:right;white-space:nowrap}
+.sn-kart .sn-sil{font-size:16px;color:var(--soluk);padding:4px;flex:none;line-height:1;
+  border:none;background:none;cursor:pointer;border-radius:6px}
+.sn-kart .sn-sil:active{background:var(--cizgi)}
+.gecmis-bos{text-align:center;padding:24px 12px;color:var(--soluk);font-size:13px}
 .km{position:relative;background:var(--panel);border:1.5px solid var(--cizgi);
   border-radius:var(--r);padding:12px 12px 11px;cursor:pointer;box-shadow:var(--golge);
   transition:border-color .18s,box-shadow .18s,transform .12s}
@@ -288,6 +301,7 @@ table.t tr:last-child td{border-bottom:none}
   <button id="nb-harita" onclick="sayfaGec('harita')"><span class="ik">🗺</span><span class="lb">Harita</span></button>
   <button id="nb-patlama" onclick="sayfaGec('patlama')"><span class="ik">💥</span><span class="lb">Patlama</span></button>
   <div class="ayr"></div>
+  <button id="nb-gecmis" onclick="sayfaGec('gecmis')"><span class="ik">🕐</span><span class="lb">Geçmiş</span></button>
   <button id="nb-rapor" onclick="rapOlustur()"><span class="ik">📄</span><span class="lb">Rapor</span></button>
 </nav>
 
@@ -458,6 +472,14 @@ table.t tr:last-child td{border-bottom:none}
   <div id="patSonuc"></div>
 </div>
 
+<!-- ═══ SENARYO GEÇMİŞİ ═══ -->
+<div class="sayfa" id="sayfa-gecmis">
+  <h2 class="bol">Kayıtlı senaryolar</h2>
+  <p class="ipucu" style="margin-bottom:10px">Her hesaplamadan sonra senaryo otomatik kaydedilir. Tek dokunuşla yeniden yükleyebilirsiniz.</p>
+  <div id="gecmisListesi"></div>
+  <div class="not" style="margin-top:10px">Son 10 senaryo saklanır. Eski senaryolar otomatik silinir.</div>
+</div>
+
 </div><!-- /icerik -->
 </div><!-- /govde -->
 </div><!-- /uyg -->
@@ -534,6 +556,7 @@ function sayfaGec(id){
   adimGoster();
   if(id==="sonuc")sonucGoster();
   if(id==="harita")setTimeout(hCiz,30);
+  if(id==="gecmis")gecmisListeYenile();
 }
 function adimGoster(){
   const ad=[
@@ -725,6 +748,7 @@ function dagilimHesapla(){
     yonKaynak:parseFloat(document.getElementById("aYon").value)||0,
     yonDeg:((parseFloat(document.getElementById("aYon").value)||0)+180)%360};
   adimGoster();
+  senaryoKaydet();
   sayfaGec("sonuc");
 }
 
@@ -813,6 +837,148 @@ function patlamaHesapla(){
   </table>
   <div class="not kirmizi">Yangın durumunda müdahale mesafesi 33 kPa halkasının (${(2.8*kok).toFixed(0)} m) dışında tutulmalıdır. Amonyum nitrat yangınına su ile müdahale edilir; yangın stoka ulaştıysa müdahale bırakılıp tahliyeye geçilir.</div></div>`;
   document.getElementById("patSonuc").innerHTML=h;
+}
+
+/* ══════════ SENARYO GEÇMİŞİ ══════════ */
+const MAKS_GECMIS = 10;
+
+function senaryoKaydet() {
+  if (!sonHesap) return;
+  const v = KDB[sonHesap.kimyasal];
+  const kayit = {
+    id: Date.now(),
+    tarih: new Date().toLocaleString("tr-TR", {
+      day: "2-digit", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    }),
+    kimyasal: sonHesap.kimyasal,
+    kimyasalAd: v.ad,
+    kimyasalRenk: v.renk,
+    kaynakMod: kaynak.mod,
+    Q: sonHesap.Q,
+    u: sonHesap.u,
+    sinif: sonHesap.sinif,
+    yonKaynak: sonHesap.yonKaynak,
+    anlik: sonHesap.anlik,
+    hafif: sonHesap.hafif,
+    yog: sonHesap.yog,
+    hesaplar: sonHesap.hesaplar,
+    lelMesafe: sonHesap.lelMesafe,
+    yonDeg: sonHesap.yonDeg,
+    // kaynak form değerleri — yeniden yüklemek için
+    form: {
+      dCap: document.getElementById("dCap")?.value,
+      dBasinc: document.getElementById("dBasinc")?.value,
+      dSicaklik: document.getElementById("dSicaklik")?.value,
+      aRuz: document.getElementById("aRuz")?.value,
+      aYon: document.getElementById("aYon")?.value,
+      aSinif: document.getElementById("aSinif")?.value,
+    }
+  };
+  try {
+    const liste = JSON.parse(localStorage.getItem("khem_gecmis") || "[]");
+    liste.unshift(kayit);
+    if (liste.length > MAKS_GECMIS) liste.length = MAKS_GECMIS;
+    localStorage.setItem("khem_gecmis", JSON.stringify(liste));
+  } catch(e) {}
+}
+
+function senaryoYukle(id) {
+  try {
+    const liste = JSON.parse(localStorage.getItem("khem_gecmis") || "[]");
+    const k = liste.find(x => x.id === id);
+    if (!k) return;
+    // Kimyasal seç
+    secKimyasal = k.kimyasal;
+    kmSec(k.kimyasal);
+    // Kaynak modunu geri yükle
+    kaynak.mod = k.kaynakMod;
+    kaynak.Q = k.Q;
+    // Form değerlerini geri yükle
+    if (k.form) {
+      Object.entries(k.form).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      });
+    }
+    // sonHesap'ı doğrudan yükle
+    sonHesap = {
+      kimyasal: k.kimyasal, Q: k.Q, u: k.u, sinif: k.sinif,
+      yonKaynak: k.yonKaynak, anlik: k.anlik, hafif: k.hafif,
+      yog: k.yog, hesaplar: k.hesaplar, lelMesafe: k.lelMesafe, yonDeg: k.yonDeg
+    };
+    adimGoster();
+    sayfaGec("sonuc");
+  } catch(e) { alert("Senaryo yüklenemedi."); }
+}
+
+function senaryoSil(id, e) {
+  e.stopPropagation();
+  try {
+    let liste = JSON.parse(localStorage.getItem("khem_gecmis") || "[]");
+    liste = liste.filter(x => x.id !== id);
+    localStorage.setItem("khem_gecmis", JSON.stringify(liste));
+    gecmisListeYenile();
+  } catch(err) {}
+}
+
+function gecmisListeYenile() {
+  const kap = document.getElementById("gecmisListesi");
+  if (!kap) return;
+  let liste = [];
+  try { liste = JSON.parse(localStorage.getItem("khem_gecmis") || "[]"); } catch(e) {}
+  if (!liste.length) {
+    kap.innerHTML = '<div class="gecmis-bos">📭 Henüz kaydedilmiş senaryo yok.<br>Bir hesaplama yapınca buraya otomatik eklenir.</div>';
+    return;
+  }
+  kap.innerHTML = liste.map(k => {
+    const e3 = k.hesaplar?.find(h => h.ad === "ERPG-3");
+    const e2 = k.hesaplar?.find(h => h.ad === "ERPG-2");
+    const ozet = e3 && e2
+      ? `ERPG-3: ${mYaz(e3.mesafe)} · ERPG-2: ${mYaz(e2.mesafe)}`
+      : "Sonuç mevcut";
+    const kaynakAd = {delik:"Boru deliği",tank:"Tank",havuz:"Havuz",anlik:"Anlık"}[k.kaynakMod] || k.kaynakMod;
+    return `<div class="sn-kart" onclick="senaryoYukle(${k.id})">
+      <div class="sn-ren" style="background:${k.kimyasalRenk}"></div>
+      <div class="sn-ic">
+        <div class="sn-ad">${k.kimyasalAd} · ${kaynakAd} · ${k.u} m/s ${k.sinif}</div>
+        <div class="sn-alt">${ozet}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="sn-ms">${k.tarih}</div>
+        <button class="sn-sil" onclick="senaryoSil(${k.id},event)" title="Sil">🗑</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ══════════ KULLANILAN FORMÜLLER ══════════ */
+function formulBilgisi(sonHesap) {
+  if (!sonHesap) return "";
+  const v = KDB[sonHesap.kimyasal];
+  const model = sonHesap.hafif
+    ? "Pasquill-Gifford Gauss sürekli salım plume modeli"
+    : "Britter-McQuaid (1980) yoğun gaz sürekli salım korelasyonu";
+  const denklem = sonHesap.hafif
+    ? "C(x) = Q / (π · σ<sub>y</sub> · σ<sub>z</sub> · u)"
+    : "c/c₀ = 0,091 · (x/L<sub>D</sub>)<sup>−0,88</sup>, &nbsp; L<sub>D</sub> = √(Q<sub>v</sub>/u)";
+  const kaynak_ref = sonHesap.hafif
+    ? "Turner (1970), Seinfeld &amp; Pandis"
+    : "Britter &amp; McQuaid, J. Hazardous Materials, 1980";
+  const sinif_ref = {
+    A:"güneşli, rüzgâr &lt;2 m/s",B:"güneşli/az bulutlu",
+    C:"az bulutlu",D:"nötr (genel gündüz)",
+    E:"gece, hafif bulut",F:"sakin gece, açık gökyüzü"
+  }[sonHesap.sinif] || "";
+  return `<h2 class="r-bol"><span>★</span>Kullanılan Model ve Formüller</h2>
+  <div class="r-bilgi kesme">
+    <div><span class="e">Dağılım modeli</span><span class="d">${model}</span></div>
+    <div><span class="e">Kaynak</span><span class="d">${kaynak_ref}</span></div>
+    <div><span class="e">Temel denklem</span><span class="d" style="font-size:8pt">${denklem}</span></div>
+    <div><span class="e">P-G Sınıf ${sonHesap.sinif} — atmosfer</span><span class="d">${sinif_ref}</span></div>
+    <div><span class="e">ERPG değerleri</span><span class="d">AIHA Emergency Response Planning Guidelines, ${v.ad}</span></div>
+    <div><span class="e">Sınırlamalar</span><span class="d" style="font-size:7.5pt">Düz arazi, zemin seviyesi kaynak, sürekli salım varsayılmıştır. Basınçlı sıvı salımlarında aerosol etkisiyle gerçek mesafeler uzun olabilir.</span></div>
+  </div>`;
 }
 
 /* ══════════ RAPOR ══════════ */
@@ -910,6 +1076,7 @@ function rapOlustur(){
   <div class="r-mudahale kesme"><b>${v.ad} — kimyasala özel not</b>${v.onlem}</div>
   ${haritaBolum}
 
+  ${formulBilgisi(sonHesap)}
   <h2 class="r-bol"><span>${nKim}</span>Kimyasal Özellikleri</h2>
   <div class="r-bilgi kesme">
     <div><span class="e">Mol kütlesi</span><span class="d">${v.mol} g/mol</span></div>
