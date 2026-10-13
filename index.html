@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>İGSAŞ KHEM — Kimyasal Dağılım ve Tehlike Etki Modeli</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-/* ══ AÇIK TEMA ══ */
 :root{
-  --zemin:#F2F4F7; --panel:#FFFFFF; --panel2:#F7F9FB; --cizgi:#E1E6EC;
-  --metin:#16202B; --soluk:#65748A; --parlak:#000000;
-  --nav:#FFFFFF; --navAktif:#FFF1E8;
-  --ust:#FFFFFF; --ustMetin:#16202B;
+  --zemin:#F2F4F7; --panel:#FFFF; --panel2:#F7F9FB; --cizgi:#E1E6EC;
+  --metin:#16202B; --soluk:#65748A; --parlak:#0000;
+  --nav:#FFFF; --navAktif:#FFF1E8;
+  --ust:#FFFF; --ustMetin:#16202B;
   --golge:0 1px 3px rgba(20,35,55,.08);
   --golgeK:0 4px 14px rgba(20,35,55,.10);
   --kutuIc:rgba(255,255,255,0.96);
@@ -19,10 +20,9 @@
   --tehlike:#C1121F; --uyari:#B37F00; --iyi:#2D7A46; --bilgi:#1F5F9E;
   --r:12px; --r2:8px;
 }
-/* ══ KOYU TEMA ══ */
 html[data-tema="koyu"]{
   --zemin:#0D131A; --panel:#161F2A; --panel2:#1D2836; --cizgi:#2A3644;
-  --metin:#D6DEE9; --soluk:#7F8FA3; --parlak:#FFFFFF;
+  --metin:#D6DEE9; --soluk:#7F8FA3; --parlak:#FFFF;
   --nav:#131C25; --navAktif:#2A1B10;
   --ust:#131C25; --ustMetin:#EDF2F7;
   --golge:0 1px 3px rgba(0,0,0,.4);
@@ -38,8 +38,6 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--cizgi);border-radius:4px}
-
-/* ── ÜST BAR ── */
 #uyg{display:flex;flex-direction:column;height:100%}
 header{background:var(--ust);border-bottom:1px solid var(--cizgi);
   padding:9px 12px;display:flex;align-items:center;gap:10px;flex:none;box-shadow:var(--golge)}
@@ -59,8 +57,6 @@ header{background:var(--ust);border-bottom:1px solid var(--cizgi);
   background:var(--panel2);color:var(--metin);font-size:16px;cursor:pointer;
   display:flex;align-items:center;justify-content:center}
 .tema-btn:active{background:var(--cizgi)}
-
-/* ── GÖVDE + SOL NAV ── */
 #govde{display:flex;flex:1;overflow:hidden;position:relative}
 nav.sol{width:60px;background:var(--nav);border-right:1px solid var(--cizgi);
   display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;flex:none;overflow-y:auto}
@@ -71,12 +67,9 @@ nav.sol button .lb{font-size:9px;font-weight:700;letter-spacing:.2px}
 nav.sol button:active{background:var(--panel2)}
 nav.sol button.aktif{background:var(--navAktif);color:var(--vurgu)}
 nav.sol .ayr{width:28px;height:1px;background:var(--cizgi);margin:5px 0}
-
 #icerik{flex:1;overflow-y:auto;padding-bottom:30px;transition:all .2s ease}
 .sayfa{display:none;padding:12px;max-width:860px;margin:0 auto}
 .sayfa.aktif{display:block}
-
-/* ── ORTAK ── */
 .kart{background:var(--panel);border:1px solid var(--cizgi);border-radius:var(--r);
   padding:13px;margin-bottom:10px;box-shadow:var(--golge)}
 h2.bol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;
@@ -87,12 +80,8 @@ h2.bol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.
 .hizali label.f{min-height:15px;display:flex;align-items:flex-end}
 .hizali .birim{min-height:15px}
 @media(max-width:520px){.izgara3{grid-template-columns:1fr 1fr}}
-
-/* ── KİMYASAL KARTLARI ── */
 .km-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 @media(min-width:700px){.km-grid{grid-template-columns:repeat(3,1fr)}}
-
-/* ── MASAÜSTÜ İKİ SÜTUN ── */
 @media(min-width:960px){
   #icerik{flex:0 0 52%;max-width:52%;border-right:1px solid var(--cizgi);}
   #sag-panel{display:flex;flex-direction:column;gap:10px;
@@ -102,12 +91,8 @@ h2.bol{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.
   nav.sol button{width:40px}
   .sayfa{padding:10px;max-width:100%}
 }
-
-/* Harita tam ekran modu ve Sağ panel kapalı modu */
 body.sag-gizli #icerik{flex:1 1 100%!important;max-width:100%!important;border-right:none}
 body.sag-gizli #sag-panel{display:none!important}
-
-/* ── SAĞ PANEL ── */
 #sag-panel{display:none;background:var(--zemin)}
 .sp-kart{background:var(--panel);border:1px solid var(--cizgi);border-radius:var(--r);
   padding:11px 13px;box-shadow:var(--golge)}
@@ -140,8 +125,6 @@ body.sag-gizli #sag-panel{display:none!important}
   border:none;background:none;cursor:pointer;border-radius:6px}
 .sn-kart .sn-sil:active{background:var(--cizgi)}
 .gecmis-bos{text-align:center;padding:24px 12px;color:var(--soluk);font-size:13px}
-
-/* ── KİMYASAL KART ── */
 .km{position:relative;background:var(--panel);border:1.5px solid var(--cizgi);
   border-radius:var(--r);padding:12px 12px 11px;cursor:pointer;box-shadow:var(--golge);
   transition:border-color .18s,box-shadow .18s,transform .12s}
@@ -159,8 +142,6 @@ body.sag-gizli #sag-panel{display:none!important}
 .km .thk.yanici{background:color-mix(in srgb,#F59E0B 15%,var(--panel));color:#B45309;border:1px solid #F59E0B}
 .km .thk.toksik{background:color-mix(in srgb,#C1121F 12%,var(--panel));color:#C1121F;border:1px solid #C1121F}
 .km .thk.boguc{background:color-mix(in srgb,#1F5F9E 12%,var(--panel));color:#1F5F9E;border:1px solid #1F5F9E}
-
-/* ── FORM ── */
 label.f{display:block;font-size:11px;font-weight:700;color:var(--soluk);
   margin:10px 0 4px;letter-spacing:.2px}
 input.f,select.f,textarea.f{width:100%;font-family:inherit;font-size:14px;padding:9px 10px;
@@ -173,8 +154,6 @@ input.f:focus,select.f:focus{outline:2px solid var(--vurgu);outline-offset:-1px;
 .not.uyari{border-left-color:var(--uyari)}
 .not.kirmizi{border-left-color:var(--tehlike)}
 .not.yesil{border-left-color:var(--iyi)}
-
-/* ── BUTON ── */
 button.btn{font-family:inherit;font-size:14px;font-weight:700;border:none;
   border-radius:var(--r2);padding:10px 14px;cursor:pointer}
 .btn-ana{background:var(--vurgu);color:#fff;box-shadow:0 1px 4px rgba(232,93,4,.28)}
@@ -188,15 +167,11 @@ button.btn{font-family:inherit;font-size:14px;font-weight:700;border:none;
 .btn-kalib-ok{background:#1c7c3e!important;color:#fff!important;border-color:#1c7c3e!important}
 .btn-sira{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
 .btn-sira .btn{flex:1;min-width:110px}
-
-/* ── KAYNAK SEKMELERİ ── */
 .ks-tab{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
 @media(min-width:600px){.ks-tab{grid-template-columns:repeat(4,1fr)}}
 .ks-tab button{font-size:12px;font-weight:700;padding:9px 6px;border:1px solid var(--cizgi);
   border-radius:var(--r2);background:var(--panel);color:var(--soluk);cursor:pointer}
 .ks-tab button.ak{background:var(--vurgu);color:#fff;border-color:var(--vurgu)}
-
-/* ── SONUÇ BANTLARI ── */
 .bant{border-radius:var(--r2);padding:11px 13px;margin-bottom:7px;
   border:1px solid var(--bk);border-left:5px solid var(--bk);
   background:color-mix(in srgb,var(--bk) 9%,var(--panel))}
@@ -207,13 +182,11 @@ button.btn{font-family:inherit;font-size:14px;font-weight:700;border:none;
 .bant .esik-det{font-size:11px;color:var(--soluk);margin-top:5px;padding-top:5px;
   border-top:1px solid color-mix(in srgb,var(--bk) 20%,transparent);
   display:flex;gap:12px;flex-wrap:wrap}
-
-/* ── HARİTA VE UYGULAMA İÇİ TAM EKRAN ── */
 #haritaKap{position:relative;border:1px solid var(--cizgi);border-radius:var(--r);
   overflow:hidden;background:var(--panel2);box-shadow:var(--golge);height:540px;width:100%}
 #haritaKap.uyg-tam-ekran{
   position:fixed!important;top:0;left:0;right:0;bottom:0;width:100vw!important;
-  height:100vh!important;z-index:99999;border-radius:0;border:none;margin:0;
+  height:100vh!important;z-index:9999;border-radius:0;border:none;margin:0;
 }
 #hKanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 .h-zoom{position:absolute;top:9px;right:9px;z-index:10;display:flex;flex-direction:column;gap:5px}
@@ -231,22 +204,16 @@ button.btn{font-family:inherit;font-size:14px;font-weight:700;border:none;
 .h-lgn .sr{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;margin-bottom:3px}
 .h-lgn .sr:last-child{margin-bottom:0}
 .h-lgn .nk{width:11px;height:11px;border-radius:3px;flex:none}
-
-/* ── TABLO ── */
 table.t{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 table.t th,table.t td{padding:7px 8px;font-size:12.5px;border-bottom:1px solid var(--cizgi);text-align:left}
 table.t th{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--soluk)}
 table.t td.sag,table.t th.sag{text-align:right}
 table.t tr:last-child td{border-bottom:none}
-
-/* ── ADIM GÖSTERGESİ ── */
 .adimlar{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
   color:var(--soluk);margin-bottom:10px;flex-wrap:wrap}
 .adimlar span.a{padding:4px 9px;border-radius:999px;background:var(--panel2);border:1px solid var(--cizgi)}
 .adimlar span.a.ok{background:color-mix(in srgb,var(--iyi) 14%,var(--panel));color:var(--iyi);border-color:var(--iyi)}
 .adimlar span.a.simdi{background:var(--vurgu);color:#fff;border-color:var(--vurgu)}
-
-/* ── PASSQUİLL REHBERİ ── */
 .pasq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
 @media(max-width:520px){.pasq-grid{grid-template-columns:1fr 1fr}}
 .pasq-kart{border-radius:var(--r2);padding:9px 10px;border:1.5px solid var(--cizgi);text-align:center;cursor:pointer;transition:border-color .15s}
@@ -256,16 +223,35 @@ table.t tr:last-child td{border-bottom:none}
 .pasq-kart .baslik{font-size:11px;font-weight:700;margin-top:3px}
 .pasq-kart .alt{font-size:10px;color:var(--soluk);margin-top:2px}
 .pasq-kart .met{font-size:10px;padding-top:5px;margin-top:5px;border-top:1px solid var(--cizgi);color:var(--soluk)}
-
-/* ── KONSANTRASYON GRAFİĞİ ── */
 #konsGrafKap{background:var(--panel);border:1px solid var(--cizgi);border-radius:var(--r);
   padding:12px;margin-bottom:10px;box-shadow:var(--golge)}
 #konsGrafKap canvas{max-height:280px}
 .kons-aciklama{margin-top:8px;font-size:11px;color:var(--soluk);line-height:1.6}
 .kons-aciklama .satir{display:flex;align-items:center;gap:6px;margin-bottom:2px}
 .kons-aciklama .cizgi{display:inline-block;width:24px;height:3px;border-radius:2px;flex:none}
-
-/* ── YAZDIRMA ── */
+.hm-tab{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.hm-tab button{font-size:12px;font-weight:700;padding:8px 12px;border:1px solid var(--cizgi);
+ border-radius:var(--r2);background:var(--panel);color:var(--soluk);cursor:pointer}
+.hm-tab button.ak{background:var(--vurgu);color:#fff;border-color:var(--vurgu)}
+#gercekHaritaKap{position:relative;border:1px solid var(--cizgi);border-radius:var(--r);
+ overflow:hidden;background:var(--panel2);box-shadow:var(--golge);height:540px;width:100%;margin-bottom:10px}
+#gercekHaritaKap.uyg-tam-ekran{position:fixed!important;top:0;left:0;right:0;bottom:0;width:100vw!important;
+ height:100vh!important;z-index:9999;border-radius:0;border:none;margin:0}
+#gercekHarita{position:absolute;inset:0;z-index:1;background:var(--panel2)}
+.gh-katman{position:absolute;top:9px;left:9px;z-index:1200;display:flex;gap:5px}
+.gh-katman button{font-size:11px;font-weight:700;padding:6px 10px;border:1px solid var(--cizgi);
+ border-radius:8px;background:var(--kutuIc);color:var(--metin);cursor:pointer;box-shadow:var(--golge)}
+.gh-katman button.ak{background:var(--vurgu);color:#fff;border-color:var(--vurgu)}
+.gh-hata{position:absolute;top:48px;left:9px;right:9px;z-index:1250;display:none;
+ background:color-mix(in srgb,#C1121F 12%,var(--kutuIc));border:1px solid #C1121F;color:var(--metin);
+ font-size:12px;font-weight:600;padding:8px 11px;border-radius:9px;box-shadow:var(--golgeK);cursor:pointer}
+.gh-msj{position:absolute;top:48px;left:9px;z-index:1250;background:var(--vurgu);color:#fff;
+ font-size:12px;font-weight:700;padding:8px 11px;border-radius:9px;max-width:70%;
+ box-shadow:var(--golgeK);display:none;cursor:pointer;animation:nabiz 1.6s ease-in-out infinite}
+.gh-koord{position:absolute;bottom:6px;right:8px;z-index:1200;background:var(--kutuIc);
+ border:1px solid var(--cizgi);border-radius:7px;padding:4px 8px;font-size:10.5px;font-weight:700;
+ color:var(--metin);font-variant-numeric:tabular-nums;box-shadow:var(--golge)}
+.leaflet-container{font-family:inherit}
 #rapAlan{display:none}
 @page{size:A4;margin:13mm 12mm}
 @media print{
@@ -316,7 +302,7 @@ table.t tr:last-child td{border-bottom:none}
   .r-mudahale{border:1px solid #D8DEE6;border-left:4px solid #C1121F;background:#FEF6F6;
     padding:7px 10px;border-radius:4px;font-size:8.8pt;margin-top:6px}
   .r-mudahale b{display:block;margin-bottom:3px}
-  .r-harita{width:100%;max-height:70mm;object-fit:contain;border:1px solid #D8DEE6;border-radius:5px;margin-top:5px;background:#F4F6F8}
+  .r-harita{width:100%;max-height:78mm;object-fit:contain;border:1px solid #D8DEE6;border-radius:5px;margin-top:5px;background:#F4F6F8}
   .r-hnot{font-size:8pt;color:#6B7684;margin-top:3px;text-align:center}
   .r-imz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:16px}
   .r-imz div{border-top:1px solid #14202C;padding-top:5px;font-size:8.5pt;font-weight:700}
@@ -324,8 +310,8 @@ table.t tr:last-child td{border-bottom:none}
   .r-alt{margin-top:16px;padding-top:7px;border-top:1px solid #D8DEE6;
     font-size:7.5pt;color:#7B8694;display:flex;justify-content:space-between}
   .kesme{page-break-inside:avoid;break-inside:avoid}
-  .r-uyari-bant{background:#FEF2F2;border:1px solid #C1121F55;border-left:4px solid #C1121F;
-    padding:5px 8px;border-radius:4px;font-size:8pt;margin-top:5px}
+  .r-uyari-bant{background:#FEF6EC;border:1px solid #E0B08055;border-left:4px solid #B37F00;
+    padding:4px 8px;border-radius:4px;font-size:8pt;margin-top:4px}
 }
 </style>
 </head>
@@ -379,18 +365,24 @@ table.t tr:last-child td{border-bottom:none}
 
   <div id="ks-delik" class="kart">
     <b>Boru / Flanş Deliği</b>
-    <p class="ipucu" style="margin-top:4px">Basınçlı hattan gaz kaçışı. Hat basıncı kritik sınırı aşarsa boğulmuş akış formülü devreye girer.</p>
-    <div class="izgara3">
+    <p class="ipucu" style="margin-top:4px">Basınçlı hattan kaçak. Sıvı fazda orifik akış, gaz fazda boğulmuş/kritik altı akış formülü kullanılır.</p>
+    <label class="f">Akışkan fazı</label>
+    <select class="f" id="dFaz">
+      <option value="sivi">Sıvı — basınçlı sıvı hattı (NH₃, CO₂, NO₂, asit hatları)</option>
+      <option value="gaz">Gaz — buhar / gaz hattı (CH₄ vb.)</option>
+    </select>
+    <div class="izgara3" style="margin-top:6px">
       <div><label class="f">Delik çapı (mm)</label><input class="f" type="number" id="dCap" value="10" step="1" min="0.5"><span class="birim">Flanş sızıntısı ≈ 3–10 mm</span></div>
       <div><label class="f">Hat basıncı (barg)</label><input class="f" type="number" id="dBasinc" value="8" step="0.5"></div>
       <div><label class="f">Sıcaklık (°C)</label><input class="f" type="number" id="dSicaklik" value="25" step="1"></div>
     </div>
     <div class="not" id="dBilgi">Hesapla düğmesine basınca debi burada görünür.</div>
     <div id="nh3DepoDiv" style="display:none;margin-top:6px">
-      <label class="f">NH₃ depo sıcaklığı (°C) <span style="font-weight:400;color:var(--soluk)">— flaş buharlaşma modeli için</span></label>
+      <label class="f">NH₃ depo sıcaklığı (°C) <span style="font-weight:400;color:var(--soluk)">— iki fazlı bulut modeli için</span></label>
       <input class="f" type="number" id="nh3DepoT" value="25" step="1" min="-33" max="60">
       <span class="birim">Kaynama noktası: −33,3 °C · Tipik depo: 20–40 °C</span>
     </div>
+    <div class="not" style="font-size:11px">ℹ Sıvı fazda HNO₃ / NO₂ kaçağında buhar kaynağı, dökilme gölcüğü üzerinden buharlaşma ile hesaplanır (≈2 dk dökilme, ~5 mm film varsayımı).</div>
   </div>
 
   <div id="ks-tank" class="kart" style="display:none">
@@ -414,13 +406,14 @@ table.t tr:last-child td{border-bottom:none}
 
   <div id="ks-havuz" class="kart" style="display:none">
     <b>Havuz Buharlaşması</b>
-    <p class="ipucu" style="margin-top:4px">Dökülen kimyasalın yüzeyden buharlaşma hızı (Antoine bağıntısı ve rüzgâr hızı transferi).</p>
+    <p class="ipucu" style="margin-top:4px">Dökülen kimyasalın yüzeyden buharlaşma hızı (Antoine buhar basıncı + Kawamura-Mackay kütle transferi).</p>
     <div class="izgara3">
       <div><label class="f">Havuz alanı (m²)</label><input class="f" type="number" id="hAlan" value="50" step="5"><span class="birim">Havuz/Bund alanı</span></div>
       <div><label class="f">Sıvı sıcaklığı (°C)</label><input class="f" type="number" id="hSicak" value="25" step="1"></div>
       <div><label class="f">Rüzgâr hızı (m/s)</label><input class="f" type="number" id="hRuzgar" value="3" step="0.5"></div>
     </div>
     <div class="not" id="hBilgi">Hesapla düğmesine basınca debi burada görünür.</div>
+    <div class="not uyari" style="font-size:11px">ℹ Metan sıvı havuz oluşturmaz (anında buharlaşır) — havuz modeli metan için uygulanmaz.</div>
   </div>
 
   <div id="ks-anlik" class="kart" style="display:none">
@@ -456,6 +449,7 @@ table.t tr:last-child td{border-bottom:none}
         <option value="E">E — Az kararlı (hafif bulutlu gece)</option>
         <option value="F">F — Kararlı (sakin, açık gece)</option>
       </select>
+      <span class="birim">Ağır gaz (BM) modelinde kararlılık sınıfı mesafeyi önemli ölçüde etkilemez — BM nomogramı kararlılıktan bağımsızdır (C-D koşullarında türetilmiştir).</span>
     </div>
     <div class="not uyari">En muhafazakâr acil durum analizi için <b>F sınıfı + 1,5 m/s</b> seçilmelidir.</div>
   </div>
@@ -468,7 +462,7 @@ table.t tr:last-child td{border-bottom:none}
         <div class="snf" style="color:#C1121F">A</div>
         <div class="baslik">Çok Kararsız</div>
         <div class="alt">En kısa mesafe</div>
-        <div class="met">☀ Güneşli · &lt;2 m/s</div>
+        <div class="met">☀ Güneşli · <2 m/s</div>
       </div>
       <div class="pasq-kart" id="pq-B" onclick="pasqSec('B')">
         <div class="snf" style="color:#E85D04">B</div>
@@ -486,7 +480,7 @@ table.t tr:last-child td{border-bottom:none}
         <div class="snf" style="color:#1F5F9E">D</div>
         <div class="baslik">Nötr</div>
         <div class="alt">Tipik gündüz</div>
-        <div class="met">🌥 Bulutlu veya &gt;7 m/s</div>
+        <div class="met">🌥 Bulutlu veya >7 m/s</div>
       </div>
       <div class="pasq-kart" id="pq-E" onclick="pasqSec('E')">
         <div class="snf" style="color:#5B2D8E">E</div>
@@ -498,9 +492,18 @@ table.t tr:last-child td{border-bottom:none}
         <div class="snf" style="color:#7C2D12">F</div>
         <div class="baslik">Kararlı</div>
         <div class="alt" style="color:#C1121F;font-weight:700">En uzak mesafe!</div>
-        <div class="met">🌙 Durgun, açık gece &lt;2 m/s</div>
+        <div class="met">🌙 Durgun, açık gece <2 m/s</div>
       </div>
     </div>
+  </div>
+
+  <div class="kart">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <b style="font-size:13px">📡 Canlı Hava Durumu</b>
+      <button class="btn btn-ana btn-kk" id="havaBtn" onclick="havaCanliCek()">Canlı Veri Al</button>
+    </div>
+    <p class="ipucu" style="margin-top:4px">İGSAŞ Körfez sahası (40.752065°N, 29.760056°E) için Open-Meteo anlık verisi. Rüzgâr hızı m/s birimiyle çekilir; hız ve yön alanları otomatik doldurulur, kararlılık sınıfı önerilir.</p>
+    <div id="havaSonuc" style="margin-top:4px"></div>
   </div>
 
   <div class="btn-sira">
@@ -520,7 +523,27 @@ table.t tr:last-child td{border-bottom:none}
     <input type="file" id="hDosya" accept="image/*" onchange="haritaYukle(this)" style="margin-top:8px">
     <button class="btn btn-ik btn-blok btn-kk" onclick="document.getElementById('hYukleKart').style.display='none'">Vazgeç</button>
   </div>
-  <div id="haritaKap">
+  <div class="hm-tab">
+    <button data-mod="online" class="ak" onclick="haritaModuSec('online')">🛰 Gerçek Harita (Çevrimiçi)</button>
+    <button data-mod="fotograf" onclick="haritaModuSec('fotograf')">📷 Kalibreli Fotoğraf</button>
+  </div>
+  <div id="gercekHaritaKap">
+    <div id="gercekHarita"></div>
+    <div class="gh-katman">
+      <button id="gk-uydu" class="ak" onclick="katmanSec('uydu')">Uydu</button>
+      <button id="gk-sokak" onclick="katmanSec('sokak')">Sokak</button>
+    </div>
+    <div class="gh-hata" id="ghHata" onclick="this.style.display='none'"></div>
+    <div class="gh-msj" id="ghMsj" onclick="ghKaynakIptal()"></div>
+    <div class="h-zoom">
+      <button onclick="ghZoom(1.5)" title="Yakınlaştır">+</button>
+      <button onclick="ghZoom(1/1.5)" title="Uzaklaştır">−</button>
+      <button onclick="ghMerkezeDon()" title="Tesise dön" style="font-size:15px">⌂</button>
+      <button onclick="ghTamEkran()" title="Tam ekran" style="font-size:15px">⛶</button>
+    </div>
+    <div class="gh-koord" id="ghKoordinat">40.752065°N, 29.760056°E</div>
+  </div>
+  <div id="haritaKap" style="display:none">
     <div class="h-msj" id="hMsj" onclick="moduIptal()"></div>
     <div class="h-zoom">
       <button onclick="zoomAdim(1.5)" title="Yakınlaştır">+</button>
@@ -578,48 +601,50 @@ table.t tr:last-child td{border-bottom:none}
 
 <script>
 /* ════ KİMYASAL VERİTABANI (İGSAŞ Sahasına Uygun) ════ */
+/* vaporB: Antoine katsayıları — base-10 log, P [mmHg], T [°C]
+   (her set, kimyasalın kaynama noktasında 760 mmHg verecek şekilde doğrulanmıştır) */
 const KDB={
  NH3:{ad:"Amonyak",sembol:"NH<sub>3</sub>",duz:"NH₃",renk:"#E85D04",bekra:"P5",
-  mol:17.03,kaynama:-33.3,yogunlukGaz:0.73,yogunlukSivi:682,hafif:true,
-  vaporB:{A:16.9481,B:2132.5,C:236.0},
-  erpg:{e1:25,e2:150,e3:750},idlh:300,lfl:15,ufl:28,yaniciMi:true,model:"Gauss",
+  mol:17.031,kaynama:-33.3,yogunlukGaz:0.73,yogunlukSivi:682,hafif:true,ikiFaz:true,
+  vaporB:{A:7.409,B:938.2,C:240.5},
+  erpg:{e1:25,e2:150,e3:750},idlh:300,lfl:15,ufl:28,yaniciMi:true,model:"İki fazlı bulut (BM)",
   tehlikeTur:"toksik",
-  aciklama:"Sıvılaştırılmış basınçlı amonyak. Kaçakta ani flaş buharlaşma ve aerosol oluşur. Gaz fazı havadan hafiftir, yükselerek dağılır.",
+  aciklama:"Sıvılaştırılmış basınçlı amonyak. Kaçakta ani flaş buharlaşma ve aerosol oluşur; bulut kaynakta soğuk ve havadan ağırdır, seyrelince yükselir.",
   onlem:"Rüzgâr altına gidilmez. Tahliye rüzgâra dik yönde yapılır. Tam yüz maskesi ve buhar geçirmez tulum gerekir."},
  HNO3:{ad:"Nitrik Asit %65",sembol:"HNO<sub>3</sub>",duz:"HNO₃",renk:"#C1121F",bekra:"C",
   mol:63.01,kaynama:83,yogunlukGaz:2.58,yogunlukSivi:1391,hafif:false,
-  vaporB:{A:7.87,B:1826,C:228},
-  erpg:{e1:1,e2:6,e3:25},idlh:25,lfl:null,ufl:null,yaniciMi:false,model:"Yoğun gaz",
+  vaporB:{A:8.153,B:1640.0,C:228.0},
+  erpg:{e1:1,e2:6,e3:25},idlh:25,lfl:null,ufl:null,yaniciMi:false,model:"Britter-McQuaid (ağır gaz)",
   tehlikeTur:"toksik",
   aciklama:"Buharlaşınca kırmızı-kahverengi NO₂ açığa çıkarır. Buhar havadan ağırdır; çukurlarda ve zemin seviyesinde birikir.",
   onlem:"Zemin seviyesinde birikime dikkat. Solunum koruması zorunlu. Nem ile birleşince gecikmeli akciğer ödemi yapar."},
  NO2:{ad:"Azot Dioksit",sembol:"NO<sub>2</sub>",duz:"NO₂",renk:"#8B1A1A",bekra:"C",
   mol:46.01,kaynama:21.2,yogunlukGaz:1.87,yogunlukSivi:1447,hafif:false,
-  vaporB:{A:7.38,B:1296,C:237},
-  erpg:{e1:1,e2:20,e3:30},idlh:20,lfl:null,ufl:null,yaniciMi:false,model:"Yoğun gaz",
+  vaporB:{A:6.928,B:1045.0,C:237.0},
+  erpg:{e1:1,e2:20,e3:30},idlh:20,lfl:null,ufl:null,yaniciMi:false,model:"Britter-McQuaid (ağır gaz)",
   tehlikeTur:"toksik",
   aciklama:"Kırmızı-kahverengi keskin duman. Havadan belirgin şekilde ağırdır. Nitrik asit ünitesinin karakteristik salımı.",
   onlem:"Belirtiler 4–24 saat gecikebilir; maruz kalan personel belirti olmasa dahi tıbbi gözleme alınır."},
  CO2:{ad:"Karbon Dioksit",sembol:"CO<sub>2</sub>",duz:"CO₂",renk:"#1F5F9E",bekra:"—",
   mol:44.01,kaynama:-78.5,yogunlukGaz:1.84,yogunlukSivi:770,hafif:false,
-  vaporB:{A:10.14,B:1353,C:264},
-  erpg:{e1:10000,e2:40000,e3:50000},idlh:40000,lfl:null,ufl:null,yaniciMi:false,model:"Yoğun gaz",
+  vaporB:{A:7.916,B:934.7,C:264.0},
+  erpg:{e1:10000,e2:40000,e3:50000},idlh:40000,lfl:null,ufl:null,yaniciMi:false,model:"Britter-McQuaid (ağır gaz)",
   tehlikeTur:"boguc",
   aciklama:"Üre ünitesi proses gazı. Toksik değil fakat yüksek konsantrasyonda boğucudur; çukur ve kanalizasyonlarda birikir.",
   onlem:"Kapalı alan girişinde oksijen ölçümü zorunludur."},
  CH4:{ad:"Doğalgaz / Metan",sembol:"CH<sub>4</sub>",duz:"CH₄",renk:"#2D7A46",bekra:"F",
   mol:16.04,kaynama:-161.5,yogunlukGaz:0.717,yogunlukSivi:422,hafif:true,
-  vaporB:{A:6.61,B:405,C:268},
-  erpg:{e1:5000,e2:33000,e3:50000},idlh:null,lfl:5,ufl:15,yaniciMi:true,model:"Gauss",
+  vaporB:null,
+  erpg:null,idlh:null,lfl:5,ufl:15,yaniciMi:true,model:"Gauss (hafif gaz)",
   tehlikeTur:"yanici",
-  aciklama:"Tesis ana hammadde hattı. Asıl risk patlama/parlama sınırıdır.",
+  aciklama:"Tesis ana hammadde hattı. Asıl risk patlama/parlama sınırıdır (LEL). Toksik etkisi yoktur (basit boğucu).",
   onlem:"LEL bölgesindeki tüm tutuşturucu kaynaklar derhal kesilir."}
 };
 
 let secKimyasal=null, kaynak={mod:"delik",Q:0}, sonHesap=null;
 let konsChart=null;
 
-/* ════ NH₃ FLAŞ BUHARLAŞMA FONKSİYONLARI ════ */
+/* ════ NH₃ FLAŞ BUHARLAŞMA ════ */
 function nh3FlashFrac(T_depo){
   const Tb=-33.3+273.15;
   const T=T_depo+273.15;
@@ -631,11 +656,124 @@ function nh3BulutYog(f){
   const rhoG=0.73, rhoH=1.225;
   return rhoG*(1-f)+rhoH*0.05+rhoG*f*(1+f*1.5);
 }
-function nh3FAirborne(T_depo){
-  const f=nh3FlashFrac(T_depo);
-  if(f>0.20) return f+(1-f)*0.60*f;
-  return f+(1-f)*0.45*f+0.05;
+
+/* ════ PASQUILL-GİFFORD SİGMALAR (Turner, kırsal) ════ */
+function sigmalar(s,x){
+  const a=1/Math.sqrt(1+1e-4*x), b=1/Math.sqrt(1+2e-4*x), c=1/Math.sqrt(1+3e-4*x);
+  switch(s){
+    case"A":return[0.22*x*a,0.20*x];
+    case"B":return[0.16*x*a,0.12*x];
+    case"C":return[0.11*x*b,0.08*x*b];
+    case"D":return[0.08*x*b,0.06*x/Math.sqrt(1+1.5e-3*x)];
+    case"E":return[0.06*x*c,0.03*x*c];
+    default:return[0.04*x*c,0.016*x*c];
+  }
 }
+function gaussC(Q,u,s,x){const[sy,sz]=sigmalar(s,x);return Q*1e6/(Math.PI*sy*sz*u);}
+function puffC(Qt,u,s,x){const[sy,sz]=sigmalar(s,x);return Qt*1e6/(Math.pow(2*Math.PI,1.5)*sy*sy*sz);}
+
+/* ════ BRİTTER-McQUAİD NOMOGRAMI (ağır gaz) ════
+   B&M 1988 / CCPS 1999 analitik yaklaşımı:
+   α = log10( g0'²·q0 / u⁵ )   (kaynak Richardson sayısı)
+   β = log10( x / (q0/u)^0.5 ) (boyutsuz mesafe)
+   Tablo: LBL-2016 (Zhang & Oldenburg) yayınındaki CCPS Tablo 1 eğri denklemleri */
+const BM_SEVIYELER=[
+ {C:0.1,  hiA:-0.50,hiB:1.78,hiLim:-0.14,plat:1.75,platLo:-0.55,loA:0.24,loB:1.88},
+ {C:0.05, hiA:-0.56,hiB:2.06,hiLim:-0.18,plat:2.06,platLo:-0.69,loA:0.45,loB:2.39},
+ {C:0.02, hiA:-0.54,hiB:2.16,hiLim:-0.16,plat:2.25,platLo:-0.70,loA:0.59,loB:2.80},
+ {C:0.01, hiA:-0.52,hiB:2.35,hiLim:-0.20,plat:2.45,platLo:-0.67,loA:0.39,loB:2.87},
+ {C:0.005,hiA:-0.49,hiB:2.56,hiLim:-0.15,plat:2.63,platLo:-0.69,loA:0.50,loB:2.98},
+ {C:0.002,hiA:-0.50,hiB:2.71,hiLim:-0.25,plat:2.77,platLo:-0.69,loA:0.50,loB:3.12}
+];
+function bmSeviyeBeta(sv,a){
+  if(a>=sv.hiLim)return sv.hiA*a+sv.hiB;
+  if(a>=sv.platLo)return sv.plat;
+  return sv.loA*a+sv.loB;
+}
+function bmBeta(alpha,ratio){
+  if(ratio>=0.1)return bmSeviyeBeta(BM_SEVIYELER[0],alpha)-0.5*Math.log10(ratio/0.1);
+  if(ratio<=0.002)return bmSeviyeBeta(BM_SEVIYELER[5],alpha)+0.5*Math.log10(0.002/ratio);
+  for(let i=0;i<5;i++){
+    const s1=BM_SEVIYELER[i],s2=BM_SEVIYELER[i+1];
+    if(ratio<=s1.C&&ratio>=s2.C){
+      const f=(Math.log10(ratio)-Math.log10(s2.C))/(Math.log10(s1.C)-Math.log10(s2.C));
+      return bmSeviyeBeta(s2,alpha)+f*(bmSeviyeBeta(s1,alpha)-bmSeviyeBeta(s2,alpha));
+    }
+  }
+  return bmSeviyeBeta(BM_SEVIYELER[5],alpha);
+}
+/* İki fazlı (aerosollü) bulut başlangıcı — BM amonyak yöntemi:
+   buharlaşmamış sıvı, karışan hava ile kaynama noktasında tamamen buharlaştırılır */
+function bmIkiFazli(Qkg,u,T_depo){
+  const Tb=239.85, R=8.314;
+  const f=nh3FlashFrac(T_depo);
+  const mAir=(1-f)*1369e3/(1005*(T_depo+273.15-Tb));
+  const n1=1000/17.031, n2=mAir*1000/28.97;
+  const C0=n1/(n1+n2);
+  const V=(n1+n2)*R*Tb/101325;
+  const rho0=(1+mAir)/V;
+  const g0=9.81*(rho0-1.225)/1.225;
+  const q0=Qkg/rho0;
+  return{rho0,C0,g0,q0,L:Math.sqrt(q0/u),alpha:Math.log10(g0*g0*q0/Math.pow(u,5)),f};
+}
+function bmSaf(Qkg,u,rho0){
+  const g0=9.81*(rho0-1.225)/1.225;
+  const q0=Qkg/rho0;
+  return{rho0,C0:1.0,g0,q0,L:Math.sqrt(q0/u),alpha:Math.log10(g0*g0*q0/Math.pow(u,5))};
+}
+function bmMesafe(sh,ppmHedef){
+  const bm=sh.bm, mol=sh.mol;
+  const vf=ppmHedef*24.45/mol*1e-6;
+  if(vf>=bm.C0)return 3;
+  const r=vf/bm.C0;
+  return Math.min(100000,Math.pow(10,bmBeta(bm.alpha,r))*bm.L);
+}
+function bmPpmAt(sh,x){
+  const bm=sh.bm;
+  const xh=x/bm.L;
+  if(xh<=0.5)return bm.C0*1e6;
+  const beta=Math.log10(xh);
+  const bs=BM_SEVIYELER.map(sv=>bmSeviyeBeta(sv,bm.alpha));
+  if(beta>=bs[0])return bm.C0*1e6;
+  if(beta<=bs[5])return 0.002*Math.pow(10,-2*(bs[5]-beta))*bm.C0*1e6;
+  for(let i=0;i<5;i++){
+    if(bs[i+1]<=beta&&beta<=bs[i]){
+      const f=(bs[i]-beta)/((bs[i]-bs[i+1])||1e-9);
+      const lr=Math.log10(BM_SEVIYELER[i+1].C)+f*(Math.log10(BM_SEVIYELER[i].C)-Math.log10(BM_SEVIYELER[i+1].C));
+      return Math.pow(10,lr)*bm.C0*1e6;
+    }
+  }
+  return 0;
+}
+
+/* ════ ORTAK: merkez eksen derişimi (ppm) ve eşik mesafesi ════ */
+function merkezPpm(sh,x){
+  if(sh.bm)return bmPpmAt(sh,x);
+  const mg=sh.anlik?puffC(sh.Q,sh.u,sh.sinif,x):gaussC(sh.Q,sh.u,sh.sinif,x);
+  return mg*24.45/sh.mol;
+}
+function esikMesafePpm(sh,ppm){
+  if(sh.bm)return bmMesafe(sh,ppm);
+  const C=x=>merkezPpm(sh,x);
+  if(C(1)<ppm)return 0;
+  let lo=1,hi=100000;
+  if(C(hi)>ppm)return hi;
+  for(let i=0;i<80;i++){const m=(lo+hi)/2;C(m)>ppm?lo=m:hi=m;}
+  return lo;
+}
+function plumeGenislik(sh,x,ppmEsik){
+  const[sy]=sigmalar(sh.sinif,Math.max(x,1));
+  const c=merkezPpm(sh,x);
+  if(c<=ppmEsik)return 0;
+  return sy*Math.sqrt(2*Math.log(c/ppmEsik));
+}
+const ppmToMg=(ppm,mol)=>ppm*mol/24.45;
+const mYaz=v=>{
+  if(!v||v<=0)return"kaynak yakını";
+  if(v>=100000)return"> 100 km";
+  if(v>=1000)return(v/1000).toFixed(1)+" km";
+  return Math.round(v)+" m";
+};
 
 /* ════ TEMA ════ */
 function temaDegistir(){
@@ -672,9 +810,8 @@ function toggleSagPanel(zorlaAcKapa){
     miniKanvasCiz();
   },200);
 }
-
 function haritaGenisletGec(){
-  toggleSagPanel(false); // sağ paneli kapat
+  toggleSagPanel(false);
   sayfaGec("harita");
 }
 
@@ -693,11 +830,11 @@ function sayfaGec(id){
     setTimeout(()=>{
       hKanvasBoyutAyarla();
       hCiz();
+      if(ghMod==="online"&&ghMap){ghMap.invalidateSize();gercekPlumeGuncelle();}
     },40);
   }
   if(id==="gecmis")gecmisListeYenile();
 }
-
 function adimGoster(){
   const ad=[
     {k:"Kimyasal",ok:!!secKimyasal},
@@ -745,20 +882,23 @@ function kmGridYap(){
     g.appendChild(d);
   }
 }
-
 function kmSec(k){
   secKimyasal=k;
   document.querySelectorAll(".km").forEach(e=>e.classList.remove("secili"));
   const secEl=document.getElementById("km-"+k);
   if(secEl) secEl.classList.add("secili");
   const v=KDB[k];
+  /* Kaynak varsayılanlarını kimyasala göre ayarla */
+  const ty=document.getElementById("tYog");
+  if(ty&&v.yogunlukSivi)ty.value=v.yogunlukSivi;
+  const df=document.getElementById("dFaz");
+  if(df)df.value=(k==="CH4")?"gaz":"sivi";
   let sat="";
   if(v.erpg){
     sat+=`<tr><td>ERPG-1 / 2 / 3</td><td class="sag"><b>${v.erpg.e1} / ${v.erpg.e2} / ${v.erpg.e3}</b> ppm</td></tr>`;
   }
-  if(v.idlh) sat+=`<tr><td>IDLH <span class="eik-rozet idlh">Acil Sınır</span></td><td class="sag">${v.idlh} ppm</td></tr>`;
-  if(v.lfl)  sat+=`<tr><td>LEL / UEL <span class="eik-rozet lfl">Tutuşma</span></td><td class="sag">%${v.lfl} / %${v.ufl}</td></tr>`;
-
+  if(v.idlh) sat+=`<tr><td>IDLH — Acil Sınır</td><td class="sag">${v.idlh} ppm</td></tr>`;
+  if(v.lfl)  sat+=`<tr><td>LEL / UEL — Tutuşma</td><td class="sag">%${v.lfl} / %${v.ufl}</td></tr>`;
   document.getElementById("kmBilgi").innerHTML=`
    <h2 class="bol">Seçilen kimyasal</h2>
    <div class="kart" style="border-color:${v.renk};border-left:5px solid ${v.renk}">
@@ -781,7 +921,6 @@ function kmSec(k){
   adimGoster();
   nh3DepoGoster();
 }
-
 function nh3DepoGoster(){
   const gos=secKimyasal==="NH3";
   ["nh3DepoDiv","nh3DepoDiv2"].forEach(id=>{
@@ -799,27 +938,35 @@ function kaynakTab(mod){
   });
   kaynak.mod=mod;
 }
-
 function kaynakHesapla(){
   if(!secKimyasal){alert("Önce bir kimyasal seçin.");sayfaGec("kimyasal");return;}
   const v=KDB[secKimyasal];
   let Q=0;
   if(kaynak.mod==="delik"){
     const d=(parseFloat(document.getElementById("dCap").value)||0)/1000;
-    const P=((parseFloat(document.getElementById("dBasinc").value)||0)+1.013)*1e5;
+    const barg=parseFloat(document.getElementById("dBasinc").value)||0;
     const T=(parseFloat(document.getElementById("dSicaklik").value)||25)+273.15;
-    const g=v.mol<30?1.31:1.20, M=v.mol/1000, R=8.314, A=Math.PI*d*d/4, Cd=0.85;
-    const Pkr=P*Math.pow(2/(g+1),g/(g-1));
-    let tip;
-    if(Pkr>1.013e5){
-      Q=Cd*A*P*Math.sqrt(g*M/(R*T)*Math.pow(2/(g+1),(g+1)/(g-1)));
-      tip="Boğulmuş (kritik) akış";
+    const A=Math.PI*d*d/4, Cd=0.85;
+    const faz=document.getElementById("dFaz").value;
+    if(faz==="sivi"){
+      const rho=v.yogunlukSivi||1000;
+      Q=Cd*A*Math.sqrt(2*rho*barg*1e5);
+      document.getElementById("dBilgi").innerHTML=`Sıvı (orifik) akış · Debi: <b>${Q.toFixed(3)} kg/s</b> (${(Q*3600).toFixed(0)} kg/saat)`;
     }else{
-      const rho=P*M/(R*T);
-      Q=Cd*A*Math.sqrt(2*rho*Math.max(0,P-1.013e5));
-      tip="Kritik altı akış";
+      const g=v.mol<30?1.31:1.20, M=v.mol/1000, R=8.314;
+      const P=(barg+1.013)*1e5;
+      const Pkr=P*Math.pow(2/(g+1),g/(g-1));
+      let tip;
+      if(Pkr>1.013e5){
+        Q=Cd*A*P*Math.sqrt(g*M/(R*T)*Math.pow(2/(g+1),(g+1)/(g-1)));
+        tip="Boğulmuş (kritik) akış";
+      }else{
+        const rho=P*M/(R*T);
+        Q=Cd*A*Math.sqrt(2*rho*Math.max(0,P-1.013e5));
+        tip="Kritik altı akış";
+      }
+      document.getElementById("dBilgi").innerHTML=`${tip} · Debi: <b>${Q.toFixed(3)} kg/s</b> (${(Q*3600).toFixed(0)} kg/saat)`;
     }
-    document.getElementById("dBilgi").innerHTML=`${tip} · Debi: <b>${Q.toFixed(3)} kg/s</b> (${(Q*3600).toFixed(0)} kg/saat)`;
   }else if(kaynak.mod==="tank"){
     const d=(parseFloat(document.getElementById("tCap").value)||0)/1000;
     const h0=parseFloat(document.getElementById("tSeviye").value)||0;
@@ -837,14 +984,18 @@ function kaynakHesapla(){
     const Q0=Cd*Ad*Math.sqrt(2*9.81*h0)*rho;
     document.getElementById("tBilgi").innerHTML=`Başlangıç debisi <b>${Q0.toFixed(2)} kg/s</b> → 10 dk ortalaması <b>${Q.toFixed(2)} kg/s</b>`;
   }else if(kaynak.mod==="havuz"){
+    if(!v.vaporB){
+      alert("Bu kimyasal sıvı havuz oluşturmaz (anında buharlaşır). 'Delik' veya 'Anlık Salım' modelini kullanın.");
+      return;
+    }
     const Al=parseFloat(document.getElementById("hAlan").value)||0;
     const Tc=parseFloat(document.getElementById("hSicak").value)||25;
     const u=parseFloat(document.getElementById("hRuzgar").value)||1;
-    const ab=v.vaporB;
-    const Pv=Math.pow(10,ab.A-ab.B/(ab.C+Tc))*1e5;
-    const E=6.6e-4*Math.pow(u,0.78)*(v.mol/1000)*Pv/(8.314*(Tc+273.15));
-    Q=E*Al;
-    document.getElementById("hBilgi").innerHTML=`Buhar basıncı ${(Pv/1000).toFixed(1)} kPa · debi: <b>${Q.toFixed(3)} kg/s</b>`;
+    const Pv=Math.pow(10,v.vaporB.A-v.vaporB.B/(v.vaporB.C+Tc))*133.32;
+    const Dp=2*Math.sqrt(Al/Math.PI);
+    const K=0.004786*Math.pow(u,0.78)*Math.pow(Dp,-0.11);
+    Q=K*(v.mol/1000)*Pv/(8.314*(Tc+273.15))*Al;
+    document.getElementById("hBilgi").innerHTML=`Buhar basıncı ${(Pv/1000).toFixed(2)} kPa · kütle akısı ${(Q/Al*1000).toFixed(2)} g/m²/s · debi: <b>${Q.toFixed(3)} kg/s</b>`;
   }else{
     Q=parseFloat(document.getElementById("aKutle").value)||0;
   }
@@ -854,44 +1005,7 @@ function kaynakHesapla(){
   sayfaGec("atmosfer");
 }
 
-/* ════ DAĞILIM HESAPLARI ════ */
-function sigmalar(s,x){
-  const f=1/Math.sqrt(1+1e-4*x);
-  switch(s){
-    case"A":return[0.22*x*f,0.20*x];
-    case"B":return[0.16*x*f,0.12*x];
-    case"C":return[0.11*x*f,0.08*x/Math.sqrt(1+2e-4*x)];
-    case"D":return[0.08*x*f,0.06*x/Math.sqrt(1+1.5e-3*x)];
-    case"E":return[0.06*x*f,0.03*x/(1+3e-4*x)];
-    default:return[0.04*x*f,0.016*x/(1+3e-4*x)];
-  }
-}
-function gaussC(Q,u,s,x){const[sy,sz]=sigmalar(s,x);return Q*1e6/(Math.PI*sy*sz*u);}
-function yogunGazC(Q,u,s,x,yog){
-  const Qv=Q/yog, LD=Math.sqrt(Math.max(1e-10,Qv/u));
-  const xS=Math.max(1e-6,x/LD);
-  return yog*Math.min(1,0.091*Math.pow(xS,-0.88))*1e6;
-}
-function puffC(Qt,u,s,x){
-  const[sy,sz]=sigmalar(s,x);
-  return Qt*1e6/(Math.pow(2*Math.PI,1.5)*sy*sy*sz);
-}
-function esikMesafe(Q,u,s,yog,hafif,anlik,esikMg){
-  const C=x=>anlik?puffC(Q,u,s,x):(hafif?gaussC(Q,u,s,x):yogunGazC(Q,u,s,x,yog));
-  if(C(1)<esikMg)return 0;
-  let lo=1,hi=10000;
-  if(C(hi)>esikMg)return hi;
-  for(let i=0;i<80;i++){const m=(lo+hi)/2;C(m)>esikMg?lo=m:hi=m;}
-  return lo;
-}
-const ppmToMg=(ppm,mol)=>ppm*mol/24.45;
-const mYaz=v=>{
-  if(!v||v<=0)return"kaynak yakını";
-  if(v>=10000)return"> 100 km";
-  if(v>=1000)return(v/1000).toFixed(1)+" km";
-  return Math.round(v)+" m";
-};
-
+/* ════ DAĞILIM HESABI ════ */
 function dagilimHesapla(){
   if(!secKimyasal){alert("Önce bir kimyasal seçin.");sayfaGec("kimyasal");return;}
   const v=KDB[secKimyasal];
@@ -899,19 +1013,46 @@ function dagilimHesapla(){
   const u=parseFloat(document.getElementById("aRuz").value)||3;
   const s=document.getElementById("aSinif").value;
   const anlik=kaynak.mod==="anlik", Q=kaynak.Q;
+  const fazDelik=(document.getElementById("dFaz")||{}).value||"sivi";
 
-  let hafif=v.hafif??true, yog=v.yogunlukGaz??1.0;
-  let Q_hesap=Q, flashFrac=null, flashRho=null;
-  if(secKimyasal==="NH3"&&!anlik){
+  let bm=null, flashFrac=null, flashRho=null, notlar=[];
+  let model="";
+
+  if(anlik){
+    model="Gauss Puff — anlık bulut";
+  }else if(secKimyasal==="NH3"&&v.ikiFaz&&(kaynak.mod==="tank"||fazDelik==="sivi")){
+    /* İki fazlı (sıvı sprey) NH3 bulutu — BM amonyak yöntemi */
     const T_id=kaynak.mod==="tank"?"nh3DepoT2":"nh3DepoT";
     const T_depo=parseFloat(document.getElementById(T_id)?.value)||25;
-    flashFrac=nh3FlashFrac(T_depo);
-    flashRho=nh3BulutYog(flashFrac);
-    Q_hesap=Q*nh3FAirborne(T_depo);
-    hafif=false; yog=flashRho;
+    bm=bmIkiFazli(Q,u,T_depo);
+    flashFrac=bm.f;
+    flashRho=nh3BulutYog(bm.f);
+    model="Britter-McQuaid — iki fazlı (aerosollü) bulut";
+  }else if(!v.hafif){
+    /* Ağır gaz: saf buhar BM; sıvı HNO3/NO2 kaçağında gölcük buharlaşması */
+    let Qbuhar=Q;
+    if(kaynak.mod!=="havuz"&&(secKimyasal==="HNO3"||secKimyasal==="NO2")&&v.yogunlukSivi){
+      const u2=parseFloat(document.getElementById("hRuzgar")?.value)||u;
+      const Tc=parseFloat(document.getElementById("hSicak")?.value)||25;
+      const Ap=Math.min(200,(Q/v.yogunlukSivi)*120/0.005);
+      const Pv=Math.pow(10,v.vaporB.A-v.vaporB.B/(v.vaporB.C+Tc))*133.32;
+      const Dp=2*Math.sqrt(Ap/Math.PI);
+      const K=0.004786*Math.pow(u2,0.78)*Math.pow(Dp,-0.11);
+      Qbuhar=K*(v.mol/1000)*Pv/(8.314*(Tc+273.15))*Ap;
+      notlar.push(`Sıvı kaçak → ≈${Math.round(Ap)} m² gölcük varsayımı (2 dk dökilme, ~5 mm film); buhar debisi ${Qbuhar.toFixed(3)} kg/s`);
+    }
+    bm=bmSaf(Qbuhar,u,v.yogunlukGaz);
+    model="Britter-McQuaid — yoğun gaz";
+  }else{
+    model="Gauss Plume — hafif gaz";
   }
 
-  const hes=[];
+  const sh={kimyasal:secKimyasal,Q,u,sinif:s,mol:v.mol,anlik,hafif:!bm,bm,
+    flashFrac,flashRho,notlar,model,
+    yonKaynak:parseFloat(document.getElementById("aYon").value)||0,
+    hesaplar:[]};
+  sh.yonDeg=((sh.yonKaynak+180)%360);
+
   if(v.erpg){
     const es=[
       {ad:"ERPG-3",ppm:v.erpg.e3,renk:"#C1121F",tanim:"Yaşamı tehdit eden etki — derhal tahliye"},
@@ -919,31 +1060,18 @@ function dagilimHesapla(){
       {ad:"ERPG-1",ppm:v.erpg.e1,renk:"#B37F00",tanim:"Hafif geçici rahatsızlık — uyarı bölgesi"}
     ];
     for(const e of es){
-      const mg=ppmToMg(e.ppm,v.mol);
-      hes.push({...e,mg,mesafe:esikMesafe(Q_hesap,u,s,yog,hafif,anlik,mg)});
+      sh.hesaplar.push({...e,mesafe:esikMesafePpm(sh,e.ppm)});
     }
   }
-  let lelM=null;
-  if(v.yaniciMi&&v.lfl){
-    lelM=esikMesafe(Q_hesap,u,s,yog,hafif,anlik,ppmToMg(v.lfl*10000,v.mol));
-  }
-  let idlhM=null;
-  if(v.idlh){
-    const mg=ppmToMg(v.idlh,v.mol);
-    idlhM=esikMesafe(Q_hesap,u,s,yog,hafif,anlik,mg);
-  }
+  sh.lelMesafe=(v.yaniciMi&&v.lfl)?esikMesafePpm(sh,v.lfl*10000):null;
+  sh.idlhMesafe=v.idlh?esikMesafePpm(sh,v.idlh):null;
 
-  sonHesap={
-    kimyasal:secKimyasal,Q:Q_hesap,Qham:Q,u,sinif:s,hafif,yog,anlik,
-    hesaplar:hes,lelMesafe:lelM,idlhMesafe:idlhM,
-    yonKaynak:parseFloat(document.getElementById("aYon").value)||0,
-    yonDeg:((parseFloat(document.getElementById("aYon").value)||0)+180)%360,
-    flashFrac,flashRho
-  };
+  sonHesap=sh;
   adimGoster();
   senaryoKaydet();
   spSonucGuncelle();
   spFlashNot();
+  gercekPlumeGuncelle();
   sayfaGec("sonuc");
 }
 
@@ -953,27 +1081,17 @@ function konsGrafikGuncelle(){
   const kapEl=document.getElementById("konsGrafKap");
   if(!kapEl) return;
   const v=KDB[sonHesap.kimyasal];
-  const anlik=sonHesap.anlik;
-  const hafif=sonHesap.hafif;
-  const Q=sonHesap.Q;
-  const u=sonHesap.u;
-  const s=sonHesap.sinif;
-  const yog=sonHesap.yog;
-
   const maxM=Math.max(...sonHesap.hesaplar.map(e=>e.mesafe),sonHesap.idlhMesafe||0,sonHesap.lelMesafe||0,100);
   const N=120;
-  const xs=[], ys=[];
+  const xs=[], ysPpm=[];
   for(let i=1;i<=N;i++){
     const x=maxM*1.1*i/N;
     xs.push(Math.round(x));
-    const C=anlik?puffC(Q,u,s,x):(hafif?gaussC(Q,u,s,x):yogunGazC(Q,u,s,x,yog));
-    ys.push(Math.max(0.01,C));
+    ysPpm.push(Math.max(0.01,merkezPpm(sonHesap,x)));
   }
-
   const koyu=document.documentElement.getAttribute("data-tema")==="koyu";
   const griMetin=koyu?"#7F8FA3":"#65748A";
   const griCizgi=koyu?"#2A3644":"#E1E6EC";
-
   const annotations=[];
   if(v.erpg){
     const erpgRenkler={e3:"#C1121F",e2:"#E85D04",e1:"#B37F00"};
@@ -984,7 +1102,6 @@ function konsGrafikGuncelle(){
   }
   if(v.idlh) annotations.push({ppm:v.idlh,renk:"#C1121F88",etiket:"IDLH",dash:true});
   if(v.lfl)  annotations.push({ppm:v.lfl*10000,renk:"#2D7A4688",etiket:"LEL",dash:true});
-
   let canvasEl=document.getElementById("konsGrafCanvas");
   if(canvasEl && konsChart){konsChart.destroy();konsChart=null;}
   if(!canvasEl){
@@ -994,55 +1111,28 @@ function konsGrafikGuncelle(){
     if(ic) ic.appendChild(canvasEl);
   }
   const ctx=canvasEl.getContext("2d");
-  const mgToPpm=(mg,mol)=>mg*24.45/mol;
-  const ysPpm=ys.map(c=>mgToPpm(c,v.mol));
-
   konsChart=new Chart(ctx,{
     type:"line",
     data:{
       labels:xs,
       datasets:[
-        {
-          label:"Konsantrasyon (ppm)",
-          data:ysPpm,
-          borderColor:v.renk,
-          backgroundColor:v.renk+"22",
-          borderWidth:2.5,
-          pointRadius:0,
-          fill:true,
-          tension:0.3
-        },
+        {label:"Merkez eksen derişimi (ppm)",data:ysPpm,borderColor:v.renk,
+         backgroundColor:v.renk+"22",borderWidth:2.5,pointRadius:0,fill:true,tension:0.3},
         ...annotations.map(a=>({
           label:a.etiket+" ("+a.ppm.toLocaleString("tr-TR")+" ppm)",
-          data:xs.map(()=>a.ppm),
-          borderColor:a.renk,
-          borderWidth:a.dash?1.5:2,
-          borderDash:a.dash?[6,4]:[],
-          pointRadius:0,
-          fill:false
-        }))
+          data:xs.map(()=>a.ppm),borderColor:a.renk,
+          borderWidth:a.dash?1.5:2,borderDash:a.dash?[6,4]:[],pointRadius:0,fill:false}))
       ]
     },
     options:{
-      responsive:true,
-      maintainAspectRatio:true,
+      responsive:true,maintainAspectRatio:true,
       scales:{
-        x:{
-          type:"linear",
-          title:{display:true,text:"Mesafe (m)",color:griMetin,font:{size:11}},
-          ticks:{color:griMetin,font:{size:10},maxTicksLimit:8},
-          grid:{color:griCizgi}
-        },
-        y:{
-          type:"logarithmic",
-          title:{display:true,text:"Konsantrasyon (ppm)",color:griMetin,font:{size:11}},
-          ticks:{color:griMetin,font:{size:10},callback:v=>(v>=1000?(v/1000).toFixed(0)+"k":v)},
-          grid:{color:griCizgi}
-        }
+        x:{type:"linear",title:{display:true,text:"Mesafe (m)",color:griMetin,font:{size:11}},
+           ticks:{color:griMetin,font:{size:10},maxTicksLimit:8},grid:{color:griCizgi}},
+        y:{type:"logarithmic",title:{display:true,text:"Konsantrasyon (ppm)",color:griMetin,font:{size:11}},
+           ticks:{color:griMetin,font:{size:10},callback:v2=>(v2>=1000?(v2/1000).toFixed(0)+"k":v2)},grid:{color:griCizgi}}
       },
-      plugins:{
-        legend:{position:"bottom",labels:{color:griMetin,font:{size:10},boxWidth:18,padding:8}}
-      }
+      plugins:{legend:{position:"bottom",labels:{color:griMetin,font:{size:10},boxWidth:18,padding:8}}}
     }
   });
 }
@@ -1056,14 +1146,20 @@ function sonucGoster(){
     return;
   }
   const v=KDB[sonHesap.kimyasal];
-  const e3=sonHesap.hesaplar[0], e2=sonHesap.hesaplar[1];
+  const e3=sonHesap.hesaplar.find(e=>e.ad==="ERPG-3");
+  const e2=sonHesap.hesaplar.find(e=>e.ad==="ERPG-2");
+  const tahliye=(e3&&e3.mesafe>0)?e3.mesafe:((sonHesap.lelMesafe||0)>0?sonHesap.lelMesafe:0);
+  const mudahale=(e2&&e2.mesafe>0)?e2.mesafe:tahliye;
 
   let idlhUyari="";
   if(sonHesap.idlhMesafe>0&&v.idlh){
     idlhUyari=`<div class="not kirmizi" style="margin-bottom:7px">
       🚨 <b>IDLH (${v.idlh} ppm) mesafesi: ${mYaz(sonHesap.idlhMesafe)}</b> — Bu hat içindeki personel doğrudan yaşamı tehdit eden derişime maruz kalır. Acil tahliye!</div>`;
   }
-
+  let notHtml="";
+  if(sonHesap.notlar&&sonHesap.notlar.length){
+    notHtml=sonHesap.notlar.map(n=>`<div class="not">${n}</div>`).join("");
+  }
   let h=`<h2 class="bol">Senaryo özeti</h2>
   <div class="kart" style="border-left:5px solid ${v.renk}">
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px">
@@ -1075,16 +1171,17 @@ function sonucGoster(){
       <tr><td>Salım debisi</td><td class="sag"><b>${sonHesap.anlik?sonHesap.Q.toLocaleString("tr-TR")+" kg (anlık)":sonHesap.Q.toFixed(3)+" kg/s"}</b></td></tr>
       <tr><td>Rüzgâr</td><td class="sag">${sonHesap.u} m/s · ${sonHesap.yonKaynak}° yönünden</td></tr>
       <tr><td>Kararlılık</td><td class="sag">Sınıf ${sonHesap.sinif}</td></tr>
-      <tr><td>Model</td><td class="sag">${sonHesap.hafif?"Gauss (hafif gaz)":"Britter-McQuaid (ağır gaz)"}</td></tr>
+      <tr><td>Model</td><td class="sag">${sonHesap.model}</td></tr>
       ${sonHesap.flashFrac!=null?`<tr><td>NH₃ flaş fraksiyonu</td><td class="sag">%${(sonHesap.flashFrac*100).toFixed(1)}</td></tr>`:""}
+      ${sonHesap.bm?`<tr><td>Bulut başlangıcı (BM)</td><td class="sag">ρ₀=${sonHesap.bm.rho0.toFixed(2)} kg/m³ · C₀=%${(sonHesap.bm.C0*100).toFixed(1)}</td></tr>`:""}
     </table>
   </div>
+  ${notHtml}
   ${idlhUyari}
   <h2 class="bol">Tehlike mesafeleri — rüzgâr altı</h2>`;
-
   for(const e of sonHesap.hesaplar){
     let idlhKarsi="";
-    if(v.idlh&&e.ppm===v.erpg?.e2&&sonHesap.idlhMesafe>0){
+    if(v.idlh&&e.ad==="ERPG-2"&&sonHesap.idlhMesafe>0){
       idlhKarsi=`<div class="esik-det"><span>⚠ IDLH mesafesi: <b>${mYaz(sonHesap.idlhMesafe)}</b></span></div>`;
     }
     h+=`<div class="bant" style="--bk:${e.renk}">
@@ -1099,19 +1196,17 @@ function sonucGoster(){
       <div class="ac">Alt patlama sınırı — bu alanda tutuşma riski vardır</div>
     </div>`;
   }
-
   h+=`<h2 class="bol">Konsantrasyon — Mesafe Grafiği</h2>
   <div id="konsGrafKap" class="kart">
     <div style="margin-bottom:6px;font-size:12px;color:var(--soluk)">Logaritmik profil · Eşik çizgileri</div>
     <div class="kons-grafik-ic"></div>
     <div class="kons-aciklama" id="konsAciklama"></div>
   </div>`;
-
   h+=`<h2 class="bol">Acil durum kararları</h2>
   <div class="kart">
     <table class="t">
-      <tr><td>Derhal tahliye yarıçapı</td><td class="sag"><b style="color:#C1121F;font-size:15px">${mYaz(e3?.mesafe)}</b></td></tr>
-      <tr><td>Müdahale sınırı</td><td class="sag"><b style="color:#E85D04;font-size:15px">${mYaz(e2?.mesafe)}</b></td></tr>
+      <tr><td>Derhal tahliye yarıçapı</td><td class="sag"><b style="color:#C1121F;font-size:15px">${mYaz(tahliye)}</b></td></tr>
+      <tr><td>Müdahale sınırı</td><td class="sag"><b style="color:#E85D04;font-size:15px">${mYaz(mudahale)}</b></td></tr>
       ${sonHesap.idlhMesafe>0?`<tr><td>IDLH mesafesi</td><td class="sag"><b style="color:#C1121F">${mYaz(sonHesap.idlhMesafe)}</b></td></tr>`:""}
       <tr><td>Kaçınılacak yön</td><td class="sag">${sonHesap.yonKaynak}° yönünün rüzgâr altı</td></tr>
       <tr><td>Tahliye koridoru</td><td class="sag">Rüzgâra dik yönde</td></tr>
@@ -1123,7 +1218,6 @@ function sonucGoster(){
     <button class="btn btn-ik" onclick="rapOlustur()">📄 Rapor Hazırla</button>
   </div>`;
   el.innerHTML=h;
-
   setTimeout(()=>{
     konsGrafikGuncelle();
     const acEl=document.getElementById("konsAciklama");
@@ -1136,15 +1230,15 @@ function sonucGoster(){
       acEl.innerHTML=ac;
     }
   },50);
-
   spSonucGuncelle();
 }
 
-/* ════ HARİTADA GÖSTER BUTONU (SAĞ PANELİ GİZLER VE GENİŞLER) ════ */
+/* ════ HARİTADA GÖSTER ════ */
 function haritadaGosterTam(){
-  toggleSagPanel(false); // sağ paneli kapat ve uygulamaya yay
+  toggleSagPanel(false);
+  haritaModuSec("online");
   sayfaGec("harita");
-  setTimeout(plumeKaynakSec,120);
+  setTimeout(gercekPlumeGuncelle,220);
 }
 
 /* ════ SENARYO GEÇMİŞİ ════ */
@@ -1158,8 +1252,10 @@ function senaryoKaydet(){
     kimyasal:sonHesap.kimyasal,kimyasalAd:v.ad,kimyasalRenk:v.renk,
     kaynakMod:kaynak.mod,Q:sonHesap.Q,u:sonHesap.u,sinif:sonHesap.sinif,
     yonKaynak:sonHesap.yonKaynak,anlik:sonHesap.anlik,hafif:sonHesap.hafif,
-    yog:sonHesap.yog,hesaplar:sonHesap.hesaplar,lelMesafe:sonHesap.lelMesafe,
-    idlhMesafe:sonHesap.idlhMesafe,yonDeg:sonHesap.yonDeg
+    mol:sonHesap.mol,bm:sonHesap.bm,model:sonHesap.model,notlar:sonHesap.notlar,
+    yog:0,hesaplar:sonHesap.hesaplar,lelMesafe:sonHesap.lelMesafe,
+    idlhMesafe:sonHesap.idlhMesafe,yonDeg:sonHesap.yonDeg,
+    flashFrac:sonHesap.flashFrac,flashRho:sonHesap.flashRho
   };
   try{
     const liste=JSON.parse(localStorage.getItem("siper_gecmis")||"[]");
@@ -1213,7 +1309,7 @@ function gecmisListeYenile(){
   }).join("");
 }
 
-/* ════ SAĞ PANEL BİLGİLERİ ════ */
+/* ════ SAĞ PANEL ════ */
 function spSonucGuncelle(){
   const el=document.getElementById("sp-sonuc-ic");
   if(!el)return;
@@ -1221,12 +1317,14 @@ function spSonucGuncelle(){
     el.innerHTML='<div class="sp-bos">📊 Hesaplama yapılmadı.</div>';return;
   }
   const v=KDB[sonHesap.kimyasal];
-  const enUzak=Math.max(...sonHesap.hesaplar.map(e=>e.mesafe),1);
+  const zonlar=[...sonHesap.hesaplar];
+  if(sonHesap.lelMesafe>0)zonlar.push({ad:"LEL",mesafe:sonHesap.lelMesafe,renk:"#2D7A46"});
+  const enUzak=Math.max(...zonlar.map(e=>e.mesafe),1);
   let h=`<div style="display:flex;align-items:center;gap:7px;margin-bottom:7px">
     <span style="font-size:18px;font-weight:800;color:${v.renk}">${v.duz}</span>
     <span style="font-size:12px;color:var(--soluk)">${v.ad} · ${sonHesap.u} m/s · ${sonHesap.sinif}</span>
   </div>`;
-  for(const e of sonHesap.hesaplar){
+  for(const e of zonlar){
     if(e.mesafe<=0)continue;
     const g=Math.max(5,Math.round(e.mesafe/enUzak*100));
     h+=`<div class="sp-bant" style="--bk:${e.renk};flex-direction:column;align-items:stretch;gap:3px">
@@ -1244,7 +1342,6 @@ function spSonucGuncelle(){
   el.innerHTML=h;
   miniKanvasCiz();
 }
-
 function spFlashNot(){
   const el=document.getElementById("sp-flash-not");if(!el)return;
   if(secKimyasal!=="NH3"){el.style.display="none";return;}
@@ -1253,10 +1350,9 @@ function spFlashNot(){
   const f=nh3FlashFrac(T);
   const rho=nh3BulutYog(f);
   el.style.display="block";
-  el.innerHTML=`⚗ <b>NH₃ Flaş Buharlaşma Modeli</b><br>
-    ${T} °C depoda: ani flaş fraksiyonu %${(f*100).toFixed(1)} · aerosol yoğunluğu ${rho.toFixed(2)} kg/m³`;
+  el.innerHTML=`⚗ <b>NH₃ İki Fazlı Bulut Modeli</b><br>
+    ${T} °C depoda: flaş fraksiyonu %${(f*100).toFixed(1)} · aerosollü bulut yoğunluğu ${rho.toFixed(2)} kg/m³`;
 }
-
 function miniKanvasCiz(){
   const mini=document.getElementById("miniKanvas");
   if(!mini||!hKanvas||!hImg)return;
@@ -1269,12 +1365,13 @@ function miniKanvasCiz(){
   if(kd){const kDur=document.getElementById("kalibreDurum");kd.innerHTML=kDur?kDur.innerHTML:"";}
 }
 
-/* ════ RAPOR OLUŞTURMA ════ */
+/* ════ RAPOR ════ */
 function raporNo(){
   const d=new Date(),p=n=>String(n).padStart(2,"0");
   return `SIPER-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
 }
-function haritaGoruntusu(){
+/* Kalibreli fotoğraf modundan yedek harita görüntüsü */
+function fotoHaritaYedek(){
   if(!plume||!hImg)return null;
   try{
     const yedek={...zSt};
@@ -1284,6 +1381,71 @@ function haritaGoruntusu(){
     return veri;
   }catch(e){return null;}
 }
+/* Esri World_Imagery statik uydu karesi + plume kaplaması */
+function raporHaritaCiz(cb){
+  if(!sonHesap){cb(null);return;}
+  try{
+    const z=14, px=1000, py=640;
+    const lat=ghKaynak.lat, lng=ghKaynak.lng;
+    const mpp=156543.03392*Math.cos(lat*Math.PI/180)/Math.pow(2,z);
+    const W=px*mpp, H=py*mpp;
+    const dLat=(H/2)/111320, dLng=(W/2)/(111320*Math.cos(lat*Math.PI/180));
+    const sp=new URLSearchParams({
+      bbox:[lng-dLng,lat-dLat,lng+dLng,lat+dLat].join(","),
+      bboxSR:"4326",imageSR:"4326",size:px+","+py,format:"jpg",f:"image"});
+    const img=new Image();
+    img.crossOrigin="anonymous";
+    img.onload=function(){
+      try{
+        const cv=document.createElement("canvas");
+        cv.width=px; cv.height=py;
+        const c=cv.getContext("2d");
+        c.drawImage(img,0,0,px,py);
+        raporPlumeCiz(c,px,py,mpp);
+        cb(cv.toDataURL("image/jpeg",0.88));
+      }catch(e){cb(fotoHaritaYedek());}
+    };
+    img.onerror=function(){cb(fotoHaritaYedek());};
+    img.src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?"+sp.toString();
+  }catch(e){cb(fotoHaritaYedek());}
+}
+function raporPlumeCiz(c,px,py,mpp){
+  if(!sonHesap)return;
+  const ox=px/2, oy=py/2, k=1/mpp;
+  const thR=((sonHesap.yonKaynak+180)%360)*Math.PI/180;
+  const ux=Math.sin(thR), uy=-Math.cos(thR), vx=-uy, vy=ux;
+  const v=KDB[sonHesap.kimyasal];
+  const zN=sonHesap.hesaplar.filter(e=>e.mesafe>0).map(e=>({...e}));
+  if(sonHesap.lelMesafe>0&&v.lfl)zN.push({ad:"LEL",renk:"#2D7A46",mesafe:sonHesap.lelMesafe,ppm:v.lfl*10000});
+  c.save();
+  c.font="700 13px system-ui";
+  let ly=20;
+  for(const e of zN){
+    const N=30, ust=[], alt=[];
+    for(let i=0;i<=N;i++){
+      const x=Math.max(e.mesafe*i/N,1);
+      const w=plumeGenislik(sonHesap,x,e.ppm)*k;
+      ust.push([ox+(ux*x+vx*w)*k, oy+(uy*x+vy*w)*k]);
+      alt.push([ox+(ux*x-vx*w)*k, oy+(uy*x-vy*w)*k]);
+    }
+    c.beginPath();
+    ust.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));
+    for(let i=alt.length-1;i>=0;i--)c.lineTo(alt[i][0],alt[i][1]);
+    c.closePath();
+    c.fillStyle=e.renk+"40"; c.fill();
+    c.strokeStyle=e.renk; c.lineWidth=1.8; c.stroke();
+    c.fillStyle=e.renk;
+    c.fillText(`${e.ad} · ${e.ppm.toLocaleString("tr-TR")} ppm · ${mYaz(e.mesafe)}`,10,ly);
+    ly+=17;
+  }
+  c.beginPath(); c.arc(ox,oy,5,0,7);
+  c.fillStyle="#C1121F"; c.fill();
+  c.strokeStyle="#fff"; c.lineWidth=1.5; c.stroke();
+  okCiz(c,ox-ux*70,oy-uy*70,ox-ux*20,oy-uy*20,"#14202C",3.5,12);
+  c.fillStyle="#14202C"; c.font="800 12px system-ui";
+  c.fillText(`RÜZGÂR ${sonHesap.u} m/s · ${sonHesap.yonKaynak}° · Sınıf ${sonHesap.sinif}`,ox-ux*95-30,oy-uy*95);
+  c.restore();
+}
 function rapOlustur(){
   if(!sonHesap){alert("Önce bir dağılım hesabı yapın.");sayfaGec("kimyasal");return;}
   const v=KDB[sonHesap.kimyasal];
@@ -1291,11 +1453,9 @@ function rapOlustur(){
   const tarih=new Date().toLocaleDateString("tr-TR",{day:"2-digit",month:"long",year:"numeric"});
   const saat=new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
   const kaynakAd={delik:"Boru / flanş deliği",tank:"Tank kaçağı",havuz:"Havuz buharlaşması",anlik:"Anlık salım"}[kaynak.mod]||kaynak.mod;
-
   const zonlar=sonHesap.hesaplar.filter(e=>e.mesafe>0).map(e=>({...e}));
-  if(sonHesap.idlhMesafe>0)
-    zonlar.push({ad:"IDLH",ppm:v.idlh,renk:"#C1121F",mesafe:sonHesap.idlhMesafe});
-
+  if(sonHesap.lelMesafe>0&&v.lfl)
+    zonlar.push({ad:"LEL",ppm:v.lfl*10000,renk:"#2D7A46",mesafe:sonHesap.lelMesafe});
   const enUzak=Math.max(...zonlar.map(e=>e.mesafe),1);
   const satirlar=zonlar.map(e=>{
     const g=Math.max(6,Math.round(e.mesafe/enUzak*100));
@@ -1303,18 +1463,11 @@ function rapOlustur(){
       <td class="esik">${e.ad}</td>
       <td class="sag">${e.ppm.toLocaleString("tr-TR")} ppm</td>
       <td><div class="r-mb"><span class="cb"><i style="width:${g}%"></i></span><span class="ms">${mYaz(e.mesafe)}</span></div></td>
-      <td>${e.ad==="ERPG-3"?"Derhal Tahliye":e.ad==="ERPG-2"?"Müdahale Ekipleri Sınırı":"Uyarı Hattı"}</td>
+      <td>${e.ad==="ERPG-3"?"Derhal Tahliye":e.ad==="ERPG-2"?"Müdahale Ekipleri Sınırı":e.ad==="LEL"?"Tutuşma Riski":"Uyarı Hattı"}</td>
     </tr>`;
   }).join("");
-
   const salim=sonHesap.anlik?sonHesap.Q.toLocaleString("tr-TR")+" kg (anlık)":sonHesap.Q.toFixed(3)+" kg/s";
-  const hGor=haritaGoruntusu();
-  const haritaBolum=hGor?`
-    <div class="kesme">
-    <h2 class="r-bol"><span>3</span>Tesis Plume Haritası</h2>
-    <img class="r-harita" src="${hGor}">
-    <div class="r-hnot">Salım noktası ve etki sınırları · rüzgâr yönü ${sonHesap.yonKaynak}°</div></div>`:"";
-
+  const notHtml=(sonHesap.notlar||[]).map(n=>`<div class="r-uyari-bant">${n}</div>`).join("");
   document.getElementById("rapAlan").innerHTML=`
   <div class="r-ust">
     <div class="r-logo">🛡</div>
@@ -1322,12 +1475,12 @@ function rapOlustur(){
     <div class="sag"><b>${no}</b><br>${tarih} · ${saat}<br>Körfez / Kocaeli</div>
   </div>
   <div class="r-baslik">Kimyasal Yayılım ve Tehlike Etki Değerlendirme Raporu</div>
-  <div class="r-altbaslik">${sonHesap.hafif?"Gauss Plume Modeli":"Britter-McQuaid Ağır Gaz Modeli"} · BEKRA Uyumlu</div>
+  <div class="r-altbaslik">${sonHesap.model} · BEKRA Uyumlu</div>
   <h2 class="r-bol"><span>1</span>Senaryo Tanımı</h2>
   <div class="r-kim kesme" style="--kk:${v.renk}">
     <div class="frm">${v.duz}</div>
-    <div><div class="ad">${v.ad}</div><div class="md">${v.model} dağılım modeli</div></div>
-    ${v.bekra!=="—"?`<div class="rz">BEKRA ${v.bekra}</div>`:""}
+    <div><div class="ad">${v.ad}</div><div class="md">${v.model}</div></div>
+    ${v.bekra!=="—"?`<div class="rz" style="background:${v.renk};color:#fff;border-color:${v.renk};padding:2px 6px;border-radius:4px;font-size:8pt">BEKRA ${v.bekra}</div>`:""}
   </div>
   <div class="r-bilgi kesme">
     <div><span class="e">Kaynak modeli</span><span class="d">${kaynakAd}</span></div>
@@ -1335,6 +1488,7 @@ function rapOlustur(){
     <div><span class="e">Rüzgâr hızı / yönü</span><span class="d">${sonHesap.u} m/s · ${sonHesap.yonKaynak}°</span></div>
     <div><span class="e">Atmosferik kararlılık</span><span class="d">Sınıf ${sonHesap.sinif}</span></div>
   </div>
+  ${notHtml}
   <h2 class="r-bol"><span>2</span>Tehlike Mesafeleri</h2>
   <table class="r-t kesme">
     <tr><th style="width:16%">Eşik</th><th style="width:18%;text-align:right">Konsantrasyon</th>
@@ -1342,18 +1496,31 @@ function rapOlustur(){
     ${satirlar}
   </table>
   <div class="r-mudahale kesme"><b>Önlem:</b> ${v.onlem}</div>
-  ${haritaBolum}
+  <div class="kesme">
+    <h2 class="r-bol"><span>3</span>Tesis Plume Haritası (Uydu Görüntüsü)</h2>
+    <div id="rapHaritaYer"><div class="r-hnot">Uydu haritası yükleniyor…</div></div>
+  </div>
   <div class="r-imz kesme">
     <div>Hazırlayan<span>Tarih / İmza</span></div>
     <div>Proses Emniyet Uzmanı<span>Tarih / İmza</span></div>
     <div>Acil Durum Yöneticisi<span>Tarih / İmza</span></div>
   </div>`;
-  setTimeout(()=>window.print(),120);
+  raporHaritaCiz(function(gor){
+    const yer=document.getElementById("rapHaritaYer");
+    if(yer){
+      if(gor){
+        yer.innerHTML='<img class="r-harita" src="'+gor+'"><div class="r-hnot">Uydu görüntü: Esri World Imagery · salım noktası (kırmızı), etki sınırları ve rüzgâr yönü '+sonHesap.yonKaynak+'°</div>';
+      }else{
+        yer.innerHTML='<div class="r-hnot">Uydu haritası oluşturulamadı (çevrimdışı olabilirsiniz).</div>';
+      }
+    }
+    setTimeout(function(){window.print();},150);
+  });
 }
 </script>
 
 <script>
-/* ════ HARİTA CANVAS VE ETKİLEŞİMİ ════ */
+/* ════ HARİTA CANVAS (Kalibreli Fotoğraf Modu) ════ */
 let hVeri=null, hImg=null, hMod="yok", calibPt=[], plume=null;
 let zSt={s:1,tx:0,ty:0};
 let drag={on:false,moved:false,lx:0,ly:0};
@@ -1363,7 +1530,6 @@ const hKanvas=document.getElementById("hKanvas");
 const hKtx=hKanvas.getContext("2d");
 
 function koyuMu(){return document.documentElement.getAttribute("data-tema")==="koyu";}
-
 function hKanvasBoyutAyarla(){
   const wrap=document.getElementById("haritaKap");
   if(!wrap)return;
@@ -1376,17 +1542,15 @@ function hKanvasBoyutAyarla(){
     hCiz();
   }
 }
-
 function haritaUygulamaTamEkran(){
   const wrap=document.getElementById("haritaKap");
   if(!wrap)return;
-  const tamMi=wrap.classList.toggle("uyg-tam-ekran");
+  wrap.classList.toggle("uyg-tam-ekran");
   setTimeout(()=>{
     hKanvasBoyutAyarla();
     zoomSifirla();
   },80);
 }
-
 function clampZ(){
   if(!hImg)return;
   const minS=Math.min(hKanvas.width/hImg.width,hKanvas.height/hImg.height)*0.85;
@@ -1403,13 +1567,11 @@ function zoomSifirla(){
   zSt={s,tx:(hKanvas.width-hImg.width*s)/2,ty:(hKanvas.height-hImg.height*s)/2};
   hCiz();
 }
-
 hKanvas.addEventListener("wheel",e=>{
   e.preventDefault();
   const r=hKanvas.getBoundingClientRect(),sc=hKanvas.width/r.width;
   zAround((e.clientX-r.left)*sc,(e.clientY-r.top)*sc,e.deltaY<0?1.2:1/1.2);
 },{passive:false});
-
 hKanvas.addEventListener("mousedown",e=>{
   if(e.button!==0)return;
   drag={on:true,moved:false,lx:e.clientX,ly:e.clientY};
@@ -1423,8 +1585,6 @@ window.addEventListener("mousemove",e=>{
   drag.lx=e.clientX;drag.ly=e.clientY;clampZ();hCiz();
 });
 window.addEventListener("mouseup",()=>{drag.on=false;hKanvas.style.cursor="grab";setTimeout(()=>drag.moved=false,60);});
-
-/* Dokunmatik (Mobil/Tablet) */
 hKanvas.addEventListener("touchstart",e=>{
   if(e.touches.length===1){
     drag={on:true,moved:false,lx:e.touches[0].clientX,ly:e.touches[0].clientY,
@@ -1464,13 +1624,11 @@ hKanvas.addEventListener("touchend",e=>{
   }
   setTimeout(()=>drag.moved=false,80);
 });
-
 function scrToImg(ex,ey){
   const r=hKanvas.getBoundingClientRect(),sc=hKanvas.width/r.width;
   return{x:(((ex-r.left)*sc-zSt.tx)/zSt.s)/hImg.width,
          y:(((ey-r.top)*sc-zSt.ty)/zSt.s)/hImg.height};
 }
-
 function haritaYukle(inp){
   const d=inp.files[0];if(!d)return;
   const img=new Image();
@@ -1486,7 +1644,6 @@ function haritaYukle(inp){
   };
   img.src=URL.createObjectURL(d);
 }
-
 function haritaImgYukle(){
   if(!hVeri||!hVeri.img)return;
   hImg=new Image();
@@ -1497,7 +1654,6 @@ function haritaImgYukle(){
   };
   hImg.src=hVeri.img;
 }
-
 function kalibreDur(){
   const el=document.getElementById("kalibreDurum");
   const btn=document.getElementById("kalibreBtn");
@@ -1512,15 +1668,12 @@ function kalibreDur(){
     if(btn){btn.innerHTML="📏 Kalibre Et";btn.className="btn btn-ik btn-kk";}
   }
 }
-
 function haritaBaslat(){
   let olcek=null,ozel=null;
   try{
     const s=localStorage.getItem("siper_harita");
     if(s){const d=JSON.parse(s);olcek=d?.olcek||null;ozel=d?.ozel||null;}
   }catch(e){}
-
-  /* Varsayılan grid koordinat haritası (resim yoksa temiz bir saha şablonu) */
   if(!ozel){
     const dummy=document.createElement("canvas");
     dummy.width=1600; dummy.height=1000;
@@ -1532,12 +1685,11 @@ function haritaBaslat(){
     dctx.fillStyle="#31435b"; dctx.font="bold 30px system-ui";
     dctx.fillText("İGSAŞ TESİS PLANI VE SAHA KOORDİNAT ŞEBEKESİ",50,80);
     ozel=dummy.toDataURL("image/jpeg",0.8);
-    olcek=olcek||1.2; // varsayılan 1 px = 1.2 m
+    olcek=olcek||1.2;
   }
   hVeri={img:ozel,olcek};
   haritaImgYukle();
 }
-
 function msjGoster(t){
   const d=document.getElementById("hMsj");
   if(t){d.textContent=t;d.style.display="block";}else d.style.display="none";
@@ -1554,13 +1706,20 @@ function kalibrasyonBaslat(){
 }
 function plumeKaynakSec(){
   if(!sonHesap){alert("Önce dağılım hesabı yapın.");sayfaGec("kimyasal");return;}
-  if(!hVeri?.olcek){alert("Önce haritayı kalibre edin.");sayfaGec("harita");return;}
+  if(ghMod==="online"&&ghMap){ghKaynakModuBaslat();return;}
+  if(!hVeri?.olcek){alert("Önce haritayı kalibre edin.");return;}
   sayfaGec("harita");
   hMod="kaynak";
   msjGoster("⚠ Salım kaynağının yerine dokunun (İptal için dokunun)");
 }
-function plumeSil(){plume=null;document.getElementById("hLgn").style.display="none";hCiz();}
-
+function plumeSil(){
+  plume=null;
+  ghPlumeKume&&ghPlumeKume.clearLayers();
+  ghKaynak={lat:IGSAS_KOORD.lat,lng:IGSAS_KOORD.lng};
+  if(ghMap){if(ghIsaret){ghMap.removeLayer(ghIsaret);ghIsaret=null;}kaynakIsaretiCiz();}
+  document.getElementById("hLgn").style.display="none";
+  hCiz();
+}
 let sonDokunmaT=0;
 function haritaNoktaSec(ekranX,ekranY){
   if(!hImg)return;
@@ -1593,13 +1752,11 @@ function haritaNoktaSec(ekranX,ekranY){
     hMod="yok";msjGoster(null);plumeOlustur(p.x,p.y);
   }
 }
-
 hKanvas.addEventListener("click",e=>{
   if(Date.now()-sonDokunmaT<600)return;
   if(drag.moved)return;
   haritaNoktaSec(e.clientX,e.clientY);
 });
-
 function rrect(c,x,y,w,h,r){
   c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
   c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
@@ -1625,7 +1782,6 @@ function etiketCiz(c,x,y,txt,renk,fs,S){
   c.fillStyle=renk;c.fillText(txt,x,y);
   return tw;
 }
-
 function hCiz(){
   if(!hImg||!hImg.complete)return;
   hKtx.clearRect(0,0,hKanvas.width,hKanvas.height);
@@ -1634,7 +1790,6 @@ function hCiz(){
   hKtx.scale(zSt.s,zSt.s);
   hKtx.drawImage(hImg,0,0);
   const S=zSt.s;
-
   if(calibPt.length){
     hKtx.fillStyle="#1F5F9E";hKtx.strokeStyle="#fff";hKtx.lineWidth=2.5/S;
     calibPt.forEach(p=>{hKtx.beginPath();hKtx.arc(p.x*hImg.width,p.y*hImg.height,8/S,0,7);hKtx.fill();hKtx.stroke();});
@@ -1646,11 +1801,8 @@ function hCiz(){
       hKtx.stroke();hKtx.setLineDash([]);
     }
   }
-
   if(plume&&hVeri?.olcek)plumeCiz();
   hKtx.restore();
-
-  /* Dinamik Ölçek Çubuğu */
   if(hVeri?.olcek){
     const mPerPx=hVeri.olcek/zSt.s;
     const tPx=Math.min(150,hKanvas.width*0.16);
@@ -1684,33 +1836,29 @@ function hCiz(){
     hKtx.restore();
   }
 }
-
 function plumeOlustur(fx,fy){
   if(!sonHesap||!hVeri?.olcek)return;
   const pr=[];
-  for(const e of sonHesap.hesaplar){
-    if(e.mesafe<=0)continue;
+  const zN=[...sonHesap.hesaplar.filter(e=>e.mesafe>0)];
+  const v=KDB[sonHesap.kimyasal];
+  if(sonHesap.lelMesafe>0&&v.lfl)zN.push({ad:"LEL",renk:"#2D7A46",mesafe:sonHesap.lelMesafe,ppm:v.lfl*10000});
+  for(const e of zN){
     const N=36,prof=[{x:0,w:0}];
     for(let i=1;i<=N;i++){
       const x=e.mesafe*i/N;
-      const[sy]=sigmalar(sonHesap.sinif,x);
-      const C=sonHesap.hafif?gaussC(sonHesap.Q,sonHesap.u,sonHesap.sinif,x)
-              :yogunGazC(sonHesap.Q,sonHesap.u,sonHesap.sinif,x,sonHesap.yog);
-      prof.push({x,w:C>e.mg?sy*Math.sqrt(2*Math.log(C/e.mg)):0});
+      prof.push({x,w:plumeGenislik(sonHesap,Math.max(x,1),e.ppm)});
     }
     prof.push({x:e.mesafe,w:0});
     pr.push({...e,prof,maksW:Math.max(...prof.map(p=>p.w))});
   }
   if(!pr.length){alert("Bu senaryoda etki bölgesi oluşmadı.");return;}
   plume={x:fx,y:fy,yonDeg:sonHesap.yonDeg,profiller:pr,kimyasal:sonHesap.kimyasal};
-  const v=KDB[sonHesap.kimyasal];
   document.getElementById("hLgn").innerHTML=
     `<div class="sr" style="font-weight:800;margin-bottom:5px">${v.duz} · ${sonHesap.u} m/s · ${sonHesap.sinif}</div>`+
     pr.map(e=>`<div class="sr"><span class="nk" style="background:${e.renk}"></span>${e.ad} — ${mYaz(e.mesafe)}</div>`).join("");
   document.getElementById("hLgn").style.display="block";
   hCiz();
 }
-
 function plumeCiz(){
   const W=hImg.width,H=hImg.height,S=zSt.s;
   const cx=plume.x*W,cy=plume.y*H;
@@ -1718,7 +1866,6 @@ function plumeCiz(){
   const ux=Math.sin(rad),uy=-Math.cos(rad),vx=-uy,vy=ux;
   const opx=1/hVeri.olcek;
   const v=KDB[plume.kimyasal]||{};
-
   for(let i=plume.profiller.length-1;i>=0;i--){
     const e=plume.profiller[i];
     hKtx.beginPath();
@@ -1735,7 +1882,6 @@ function plumeCiz(){
     hKtx.strokeStyle=e.renk;hKtx.lineWidth=2.4/S;
     hKtx.fill();hKtx.stroke();
   }
-
   const enUzak=plume.profiller[0].mesafe*opx;
   hKtx.save();
   hKtx.setLineDash([9/S,6/S]);
@@ -1743,7 +1889,6 @@ function plumeCiz(){
   hKtx.lineWidth=1.6/S;
   hKtx.beginPath();hKtx.moveTo(cx,cy);hKtx.lineTo(cx+ux*enUzak,cy+uy*enUzak);hKtx.stroke();
   hKtx.restore();
-
   const fs=Math.max(9,13/S);
   hKtx.textAlign="left";
   plume.profiller.forEach((e,i)=>{
@@ -1761,7 +1906,6 @@ function plumeCiz(){
     hKtx.beginPath();hKtx.arc(kenarX,kenarY,3/S,0,7);hKtx.fillStyle=e.renk;hKtx.fill();
     etiketCiz(hKtx,lx,ly,`${e.ad}  ${mYaz(e.mesafe)}`,e.renk,fs,S);
   });
-
   const okU=Math.min(Math.max(enUzak*0.22,60/S),130/S);
   const bx=cx-ux*okU*1.9,by=cy-uy*okU*1.9;
   okCiz(hKtx,bx,by,cx-ux*okU*0.55,cy-uy*okU*0.55,koyuMu()?"#EAF2FF":"#16324F",4/S,15/S);
@@ -1770,13 +1914,267 @@ function plumeCiz(){
   const wtxt="RÜZGÂR "+sonHesap.u+" m/s";
   const wtw=hKtx.measureText(wtxt).width;
   etiketCiz(hKtx,bx-wtw/2,by-14/S,wtxt,koyuMu()?"#EAF2FF":"#16324F",wfs,S);
-
   const sr=11/S;
   hKtx.beginPath();hKtx.arc(cx,cy,sr,0,7);
   hKtx.fillStyle=koyuMu()?"#161F2A":"#FFFF";
   hKtx.strokeStyle=v.renk||"#C1121F";hKtx.lineWidth=3.5/S;
   hKtx.fill();hKtx.stroke();
   etiketCiz(hKtx,cx+sr+6/S,cy+fs*0.38,`${v.duz||"?"} kaçak noktası`,v.renk||"#C1121F",fs,S);
+}
+
+/* ════ GERÇEK HARİTA (Leaflet + Esri) ════ */
+const IGSAS_KOORD={lat:40.752065,lng:29.760056};
+let ghMap=null,ghIsaret=null,ghKaynakIsaret=null,ghPlumeKume=null;
+let ghKatmanUydu=null,ghKatmanSokak=null,ghAktifKatman=null;
+let ghKaroHata=0,ghOtoYedek=false,ghMod="online";
+let ghKaynak={lat:IGSAS_KOORD.lat,lng:IGSAS_KOORD.lng};
+let ghKaynakMod=false;
+
+function gercekHaritaBaslat(){
+  if(ghMap)return;
+  if(typeof L==="undefined"){
+    const h=document.getElementById("ghHata");
+    if(h){h.innerHTML="⚠ Harita kütüphanesi yüklenemedi (CDN erişimi engelli). 'Kalibreli Fotoğraf' modunu kullanın.";h.style.display="block";}
+    return;
+  }
+  try{
+    ghMap=L.map("gercekHarita",{zoomControl:false,attributionControl:true}).setView([IGSAS_KOORD.lat,IGSAS_KOORD.lng],15);
+    ghKatmanUydu=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {maxZoom:19,attribution:"Uydu: Esri, Maxar, Earthstar Geographics"});
+    ghKatmanSokak=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+      {maxZoom:19,attribution:"Sokak: Esri"});
+    [ghKatmanUydu,ghKatmanSokak].forEach(k=>{
+      k.on("tileerror",()=>karoHataSay());
+      k.on("tileload",()=>{const h=document.getElementById("ghHata");if(h)h.style.display="none";});
+    });
+    ghIsaret=L.circleMarker([IGSAS_KOORD.lat,IGSAS_KOORD.lng],
+      {radius:9,color:"#E85D04",weight:3.5,fillColor:"#E85D04",fillOpacity:.9})
+      .bindPopup("<b>İGSAŞ Tesis — Referans Tank</b><br>40.752065°N, 29.760056°E").addTo(ghMap);
+    ghPlumeKume=L.layerGroup().addTo(ghMap);
+    ghMap.on("mousemove",e=>{
+      const el=document.getElementById("ghKoordinat");
+      if(el)el.textContent=e.latlng.lat.toFixed(6)+"°N, "+e.latlng.lng.toFixed(6)+"°E";
+    });
+    ghMap.on("click",e=>{
+      if(!ghKaynakMod)return;
+      ghKaynakIptal();
+      ghKaynak={lat:e.latlng.lat,lng:e.latlng.lng};
+      kaynakIsaretiCiz();
+      gercekPlumeGuncelle();
+    });
+    katmanSec("uydu");
+  }catch(e){
+    ghHataGoster("Harita başlatılamadı: "+e.message);
+  }
+}
+function karoHataSay(){
+  ghKaroHata++;
+  if(ghKaroHata>=8&&ghAktifKatman==="uydu"&&!ghOtoYedek){
+    ghOtoYedek=true;
+    katmanSec("sokak");
+    ghHataGoster("Uydu karoları yüklenemedi (ağ engeli olabilir) → Sokak haritasına otomatik geçildi.");
+  }else if(ghKaroHata>=8){
+    ghHataGoster("Harita karo servisine erişilemedi. Üstteki düğmelerle Uydu / Sokak arasında geçiş yapın veya ağ erişimini kontrol edin.");
+  }
+}
+function ghHataGoster(m){
+  const h=document.getElementById("ghHata");
+  if(!h)return;
+  h.innerHTML="⚠ "+m+" <small>(kapatmak için dokun)</small>";
+  h.style.display="block";
+}
+function katmanSec(k){
+  if(!ghMap)return;
+  ghKaroHata=0;
+  const harita={uydu:ghKatmanUydu,sokak:ghKatmanSokak};
+  Object.values(harita).forEach(l=>{if(l)ghMap.removeLayer(l);});
+  const sec=harita[k];
+  if(!sec)return;
+  sec.addTo(ghMap);
+  ghAktifKatman=k;
+  ["uydu","sokak"].forEach(x=>{
+    const b=document.getElementById("gk-"+x);
+    if(b)b.classList.toggle("ak",x===k);
+  });
+}
+function haritaModuSec(mod){
+  ghMod=mod;
+  const gh=document.getElementById("gercekHaritaKap"), ft=document.getElementById("haritaKap");
+  document.querySelectorAll(".hm-tab button").forEach(b=>b.classList.toggle("ak",b.dataset.mod===mod));
+  if(gh)gh.style.display=mod==="online"?"block":"none";
+  if(ft)ft.style.display=mod==="online"?"none":"block";
+  if(mod==="online"){
+    if(!ghMap)gercekHaritaBaslat();
+    setTimeout(()=>{
+      if(ghMap)ghMap.invalidateSize();
+      gercekPlumeGuncelle();
+    },90);
+  }else{
+    hKanvasBoyutAyarla();
+    hCiz();
+  }
+}
+function ghZoom(f){
+  if(!ghMap)return;
+  ghMap.setZoom(ghMap.getZoom()+(f>1?1:-1));
+}
+function ghMerkezeDon(){
+  if(!ghMap)return;
+  ghMap.setView([IGSAS_KOORD.lat,IGSAS_KOORD.lng],16);
+}
+function ghTamEkran(){
+  const kap=document.getElementById("gercekHaritaKap");
+  if(!kap)return;
+  kap.classList.toggle("uyg-tam-ekran");
+  setTimeout(()=>{if(ghMap)ghMap.invalidateSize();},90);
+}
+/* Kaynak noktası yerleştirme (çevrimiçi haritada tıkla) */
+function ghKaynakModuBaslat(){
+  if(!ghMap)return;
+  ghKaynakMod=true;
+  const m=document.getElementById("ghMsj");
+  m.textContent="⚠ Salım kaynağının yerine dokunun (İptal için buraya dokunun)";
+  m.style.display="block";
+}
+function ghKaynakIptal(){
+  ghKaynakMod=false;
+  const m=document.getElementById("ghMsj");
+  if(m)m.style.display="none";
+}
+function kaynakIsaretiCiz(){
+  if(!ghMap)return;
+  if(ghIsaret){ghMap.removeLayer(ghIsaret);ghIsaret=null;}
+  if(ghKaynakIsaret)ghMap.removeLayer(ghKaynakIsaret);
+  ghKaynakIsaret=L.circleMarker([ghKaynak.lat,ghKaynak.lng],
+    {radius:8,color:"#C1121F",weight:3,fillColor:"#C1121F",fillOpacity:.95}).addTo(ghMap);
+  kaynakPopGuncelle();
+}
+function kaynakPopGuncelle(){
+  if(!ghKaynakIsaret)return;
+  let t="<b>Salım kaynağı</b><br>"+ghKaynak.lat.toFixed(6)+"°N, "+ghKaynak.lng.toFixed(6)+"°E";
+  if(sonHesap){
+    const v=KDB[sonHesap.kimyasal];
+    t="<b>"+v.duz+" kaçak noktası</b><br>"+
+      (sonHesap.anlik?sonHesap.Q.toLocaleString("tr-TR")+" kg (anlık)":sonHesap.Q.toFixed(3)+" kg/s")+
+      "<br>Rüzgâr: "+sonHesap.u+" m/s · "+sonHesap.yonKaynak+"° · Sınıf "+sonHesap.sinif;
+  }
+  ghKaynakIsaret.bindPopup(t);
+}
+/* Plume poligonu — eşik derişimine göre gerçek kontur genişliği */
+function plumePoligon(d,ppmE){
+  if(!sonHesap)return null;
+  const thR=((sonHesap.yonKaynak+180)%360)*Math.PI/180;
+  const dx=Math.sin(thR), dy=Math.cos(thR);
+  const mLat=1/111320, mLng=1/(111320*Math.cos(ghKaynak.lat*Math.PI/180));
+  const nokta=(x,w)=>[ghKaynak.lat+(dy*x-dx*w)*mLat, ghKaynak.lng+(dx*x+dy*w)*mLng];
+  const N=26, pts=[];
+  for(let i=0;i<=N;i++){
+    const x=d*i/N;
+    pts.push(nokta(x, i===0?0:plumeGenislik(sonHesap,Math.max(x,1),ppmE)));
+  }
+  for(let i=N;i>=0;i--){
+    const x=d*i/N;
+    pts.push(nokta(x, i===0?0:-plumeGenislik(sonHesap,Math.max(x,1),ppmE)));
+  }
+  return pts;
+}
+function gercekPlumeGuncelle(){
+  if(!ghMap||!ghPlumeKume)return;
+  ghPlumeKume.clearLayers();
+  kaynakPopGuncelle();
+  if(!sonHesap)return;
+  const v=KDB[sonHesap.kimyasal];
+  const elems=[];
+  for(const e of sonHesap.hesaplar){if(e.mesafe>0)elems.push({d:e.mesafe,renk:e.renk,ad:e.ad,ppm:e.ppm});}
+  if(sonHesap.lelMesafe!=null&&sonHesap.lelMesafe>0&&v.lfl)elems.push({d:sonHesap.lelMesafe,renk:"#2D7A46",ad:"LEL",ppm:v.lfl*10000});
+  if(!elems.length)return;
+  const enUzak=Math.max.apply(null,elems.map(e=>e.d));
+  for(const el of elems){
+    if(sonHesap.anlik){
+      L.circle([ghKaynak.lat,ghKaynak.lng],{radius:el.d,color:el.renk,weight:1.5,fillColor:el.renk,fillOpacity:.20})
+        .bindTooltip(el.ad+" · "+mYaz(el.d)).addTo(ghPlumeKume);
+    }else{
+      const p=plumePoligon(el.d,el.ppm);
+      L.polygon(p,{color:el.renk,weight:1.5,fillColor:el.renk,fillOpacity:.20,opacity:.85})
+        .bindTooltip(el.ad+" · "+mYaz(el.d)).addTo(ghPlumeKume);
+    }
+  }
+  try{
+    if(sonHesap.anlik)ghMap.fitBounds(L.latLng(ghKaynak.lat,ghKaynak.lng).toBounds(enUzak*2.4),{padding:[20,20]});
+    else ghMap.fitBounds(L.latLngBounds(plumePoligon(enUzak,elems[0].ppm)).pad(0.3));
+  }catch(e){}
+}
+
+/* ── CANLI HAVA DURUMU (Open-Meteo) ── */
+function yonMetni(d){
+  const y=["K","KKD","KD","DKD","D","DGD","GD","GGD","G","GGB","GB","BGB","B","BKB","KB","KKB"];
+  return y[Math.round(d/22.5)%16];
+}
+function havaKodMetni(c){
+  if(c===0)return"Açık";
+  if(c<=3)return"Parçalı bulutlu";
+  if(c===45||c===48)return"Puslu";
+  if(c>=51&&c<=57)return"Çisentili";
+  if(c>=61&&c<=67)return"Yağmurlu";
+  if(c>=71&&c<=77)return"Karlı";
+  if(c>=80&&c<=82)return"Sağanaklı";
+  if(c>=95)return"Gök gürültülü fırtına";
+  return"—";
+}
+function havaPasquilOner(u,isDay,bulut){
+  bulut=bulut==null?50:bulut;
+  let g;
+  if(!isDay)g=0; else if(bulut<=30)g=3; else if(bulut<=70)g=2; else g=1;
+  if(u<2)  return g===3?"A":(g===2?"B":(g===1?"B":"F"));
+  if(u<3)  return g===3?"B":(g===2?"B":(g===1?"C":"F"));
+  if(u<5)  return g===3?"B":(g===2?"C":(g===1?"C":"E"));
+  if(u<6)  return g===3?"C":(g===2?"C":(g===1?"D":"D"));
+  return "D";
+}
+async function havaCanliCek(){
+  const kutu=document.getElementById("havaSonuc");
+  const btn=document.getElementById("havaBtn");
+  if(!kutu)return;
+  if(btn){btn.disabled=true;btn.textContent="⏳ Veri alınıyor…";}
+  kutu.innerHTML='<div class="not">📡 İGSAŞ Körfez sahası için anlık veri alınıyor…</div>';
+  const ctrl=new AbortController();
+  const zmn=setTimeout(()=>ctrl.abort(),12000);
+  try{
+    /* URL her zaman URLSearchParams ile kurulur — elle birleştirme yapılırsa
+       & işareti HTML'e dönüşürken bozulabilir (¤ hatası) */
+    const sp=new URLSearchParams({
+      latitude:"40.752065",
+      longitude:"29.760056",
+      current:"temperature_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,wind_direction_10m,weather_code,is_day",
+      wind_speed_unit:"ms",
+      timezone:"auto"
+    });
+    const cev=await fetch("https://api.open-meteo.com/v1/forecast?"+sp.toString(),{signal:ctrl.signal});
+    if(!cev.ok){
+      let neden="HTTP "+cev.status;
+      try{const h=await cev.json();if(h&&h.reason)neden+=" — "+h.reason;}catch(_){}
+      throw new Error(neden);
+    }
+    const d=await cev.json();
+    const c=d.current;
+    if(!c)throw new Error("Yanıtta anlık veri yok");
+    if(c.wind_speed_10m!=null)document.getElementById("aRuz").value=(Math.round(c.wind_speed_10m*10)/10).toFixed(1);
+    if(c.wind_direction_10m!=null)document.getElementById("aYon").value=Math.round(c.wind_direction_10m);
+    const snf=havaPasquilOner(c.wind_speed_10m||3,c.is_day!==0,c.cloud_cover);
+    if(snf)pasqSec(snf);
+    kutu.innerHTML='<div class="not yesil"><b>✓ Veri alındı — '+
+      (c.time||"").replace("T"," ").slice(0,16)+' (yerel saat)</b><br>'+
+      '🌡 Sıcaklık: <b>'+c.temperature_2m+' °C</b> · 💧 Nem: <b>%'+c.relative_humidity_2m+'</b> · ☁ Kapalılık: <b>%'+(c.cloud_cover!=null?c.cloud_cover:"—")+'</b><br>'+
+      '🌬 Rüzgâr: <b>'+c.wind_speed_10m+' m/s</b> ('+Math.round(c.wind_direction_10m)+'°, '+yonMetni(c.wind_direction_10m)+'dan esiyor) · '+havaKodMetni(c.weather_code)+'<br>'+
+      '📈 Hız ve yön alanları dolduruldu, kararlılık sınıfı <b>'+snf+'</b> önerildi. Modeli güncellemek için <b>Dağılımı Hesapla</b> düğmesine basın.</div>';
+  }catch(hata){
+    const neden=hata.name==="AbortError"?"zaman aşımı (12 sn)":hata.message;
+    kutu.innerHTML='<div class="not kirmizi"><b>⚠ Hava verisi alınamadı — '+neden+'.</b><br>'+
+      'Cihaz çevrimdışıysa veya API engelliyse rüzgâr hızı/yönünü elle girin. Bağlantı sağlandığında tekrar deneyin.</div>';
+  }finally{
+    clearTimeout(zmn);
+    if(btn){btn.disabled=false;btn.textContent="Canlı Veri Al";}
+  }
 }
 
 /* ════ BAŞLATICI ════ */
@@ -1787,10 +2185,13 @@ window.addEventListener("DOMContentLoaded",()=>{
   haritaBaslat();
   spSonucGuncelle();
   pasqSecimGuncelle();
+  gercekHaritaBaslat();
+  haritaModuSec("online");
 });
 window.addEventListener("resize",()=>{
   hKanvasBoyutAyarla();
   setTimeout(miniKanvasCiz,100);
+  if(ghMap)ghMap.invalidateSize();
 });
 </script>
 </body>
